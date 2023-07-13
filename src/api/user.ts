@@ -28,6 +28,42 @@ export const saveNewUserDB = async (user: firebase.User | null): Promise<void> =
   }
 };
 
+export const getDBUserByEmail = async (email: string): Promise<firebase.firestore.DocumentData> => {
+  const userRef = firebase.firestore().collection('users').where('email', '==', email);
+  const snapshot = await userRef.get();
+  if (snapshot.empty) {
+    return Promise.reject('No user found');
+  }
+  return snapshot.docs[0].data();
+};
+
+export const getDBUserByUid = async (uid: string): Promise<firebase.firestore.DocumentData | undefined> => {
+  const userRef = firebase.firestore().collection('users').doc(uid);
+  const snapshot = await userRef.get();
+  if (snapshot.exists) {
+    return snapshot.data();
+  }
+  return Promise.reject('No user found');
+};
+
+export const getDBUserByDisplayName = async (displayName: string): Promise<firebase.firestore.DocumentData> => {
+  const userRef = firebase.firestore().collection('users').where('displayName', '==', displayName);
+  const snapshot = await userRef.get();
+  if (snapshot.empty) {
+    return Promise.reject('No user found');
+  }
+  return snapshot.docs[0].data();
+};
+
+export const getDBUserList = async (): Promise<firebase.firestore.DocumentData[]> => {
+  const userRef = firebase.firestore().collection('users');
+  const snapshot = await userRef.get();
+  if (snapshot.empty) {
+    return Promise.reject('No user found');
+  }
+  return snapshot.docs.map((doc) => doc.data());
+};
+
 export const onAuthStateChanged = (args: firebase.Observer<any, Error> | ((a: firebase.User | null) => any)): firebase.Unsubscribe =>
     firebase.auth().onAuthStateChanged(args);
 
