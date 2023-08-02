@@ -50,7 +50,7 @@ const HomeStack = ({ navigation }: any) => (
 const EditProfileStack = ({ navigation }: any) => (
     <Stack.Navigator>
       <Stack.Screen
-          name="EditProfile"
+          name="EditProfileScreen"
           component={ EditProfileScreen }
           options={ {
             title: 'EDIT PROFILE',
