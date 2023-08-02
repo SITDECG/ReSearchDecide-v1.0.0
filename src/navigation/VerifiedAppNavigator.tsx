@@ -1,14 +1,11 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import { HomeScreen } from '../features/home/screens/HomeScreen';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { EditProfileScreen } from "../features/edit-profile/screens/EditProfileScreen";
-import { Text } from "native-base";
 import { useSignOut } from "../hooks/use-sign-out";
-import { CommonActions, useNavigation } from "@react-navigation/native";
-import { GuestWelcomeScreen } from "../features/guest-welcome/screens/GuestWelcomeScreen";
 import { CreateGroupScreen } from "../features/create-group/screens/CreateGroupScreen";
 
 const Drawer = createDrawerNavigator();
@@ -43,7 +40,7 @@ const HomeStack = ({ navigation }: any) => (
             headerTitleStyle: styles.headerTitle,
           } }
       />
-      <Stack.Screen name={ 'CreateGroupScreen' } component={ CreateGroupScreen }/>
+      <Stack.Screen name={ 'CreateGroupScreen' } options={ { title: 'Create Group' } } component={ CreateGroupScreen }/>
     </Stack.Navigator>
 );
 
@@ -77,51 +74,46 @@ const EditProfileStack = ({ navigation }: any) => (
           } }
       />
     </Stack.Navigator>
-)
+);
 
-export const LogoutScreen = () => {
-  const navigation = useNavigation();
-  const [signOut] = useSignOut();
+
+export const VerifiedAppNavigator = () => {
+  const [handleSignOut, { isLoading, error }] = useSignOut();
 
   const handleLogout = async () => {
-    await signOut();
-    navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: 'GuestWelcomeScreen' }],
-        })
-    );
+    await handleSignOut();
   };
 
   return (
-      <TouchableOpacity onPress={ handleLogout }>
-        <Text>Cerrar sesión</Text>
-      </TouchableOpacity>
+      <Drawer.Navigator
+          screenOptions={ {
+            drawerPosition: 'right',
+            drawerType: 'slide',
+            headerShown: false,
+            drawerLabel: 'Investigation groups',
+            drawerLabelStyle: {
+              color: '#146C94',
+            },
+          } }
+          drawerContent={ (props) => (
+              <DrawerContentScrollView { ...props }>
+                <DrawerItemList { ...props } />
+                <DrawerItem
+                    label="Log out"
+                    onPress={ handleLogout }
+                    activeBackgroundColor="#146C94"
+                    labelStyle={ { color: '#146C94' } }
+                />
+              </DrawerContentScrollView>
+          ) }
+      >
+        <Drawer.Screen name="HomeStack" component={ HomeStack }/>
+        <Drawer.Screen name="EditProfileStack" component={ EditProfileStack }
+                       options={ { drawerLabel: 'Edit profile' } }/>
+      </Drawer.Navigator>
   );
 };
 
-export const VerifiedAppNavigator = () => (
-    <Drawer.Navigator
-        screenOptions={ {
-          drawerPosition: 'right',
-          drawerType: 'slide',
-          headerShown: false,
-          drawerLabel: 'Investigation groups',
-          drawerLabelStyle: {
-            color: '#146C94'
-          },
-        } }
-    >
-      <Drawer.Screen name="HomeStack" component={ HomeStack }/>
-      <Drawer.Screen name="EditProfileStack" component={ EditProfileStack }
-                     options={ { drawerLabel: 'Edit profile' } }/>
-      <Drawer.Screen
-          name="Logout"
-          options={ { drawerLabel: 'Log out' } }
-          component={ LogoutScreen }
-      />
-    </Drawer.Navigator>
-);
 
 const styles = StyleSheet.create({
   headerTitle: {

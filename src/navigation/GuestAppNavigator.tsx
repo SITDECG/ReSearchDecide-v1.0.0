@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { GuestWelcomeScreen } from '../features/guest-welcome/screens/GuestWelcomeScreen'
 import { SignUpScreen } from "../features/sign-up/screens/SignUpScreen";
+import { ForgotPasswordScreen } from "../features/forgot-password/screens/ForgotPasswordScreen";
 
 const Stack = createStackNavigator()
 
@@ -35,6 +36,17 @@ export const GuestAppNavigator = () => (
       <Stack.Screen
           name="SignUpScreen"
           component={ SignUpScreen }
+          options={
+            {
+              title: 'ReSearch Decide',
+              headerTitleAlign: 'left',
+              headerTitleStyle: headerTitleStyle.headerTitle,
+            }
+          }
+      />
+      <Stack.Screen
+          name="ForgotPasswordScreen"
+          component={ ForgotPasswordScreen }
           options={
             {
               title: 'ReSearch Decide',

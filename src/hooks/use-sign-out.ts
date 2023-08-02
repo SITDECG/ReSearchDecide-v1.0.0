@@ -21,13 +21,8 @@ export const useSignOut = (): [
     try {
       await signOut();
       setState({ isLoading: false, error: null });
-      console.log('Cierre de sesión exitoso');
     } catch (error: Error | any) {
       setState({ isLoading: false, error: error?.message || 'Error al cerrar sesión' });
-      console.log('Error al cerrar sesión:', error);
-      // Maneja el error de cierre de sesión
-      // Por ejemplo, muestra un mensaje de error al usuario
-      alert('Error al cerrar sesión');
     }
   };
 

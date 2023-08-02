@@ -10,7 +10,7 @@ type AuthenticatedLayout = {
 export const AuthenticatedLayout: FC<AuthenticatedLayout> = ({children}) => {
   return (
       <SafeAreaView
-          style={ tw.style('p-3') }
+          style={ tw.style('p-4 items-center') }
       >
         { children }
       </SafeAreaView>

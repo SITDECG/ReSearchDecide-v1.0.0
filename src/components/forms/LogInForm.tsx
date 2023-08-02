@@ -79,7 +79,7 @@ export const LogInForm = ({ onSubmit, buttonText, isLoading }: {
         <TouchableOpacity
             onPress={ () => formik.handleSubmit() }
             disabled={ isLoading }
-            style={ [styles.buttonLogin, tw`p-2 rounded my-5`] }
+            style={ [styles.button, tw`p-2 rounded my-5`] }
         >
           <Text style={ tw`text-center text-white font-bold` }>{ buttonText }</Text>
         </TouchableOpacity>
@@ -91,7 +91,7 @@ export default LogInForm;
 
 
 const styles = StyleSheet.create({
-  buttonLogin: {
+  button: {
     backgroundColor: '#146C94',
     color: '#fff',
   },

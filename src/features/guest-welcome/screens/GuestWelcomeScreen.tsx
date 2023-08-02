@@ -3,10 +3,11 @@ import { VStack, Center, Button, Text, Heading, Box, HStack, View } from 'native
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../../types/types';
 
-import tw from 'twrnc'
 import { GuestLayout } from "../../../components/layout/GuestLayout";
 import { LogInScreen } from "../../log-in/screens/LogInScreen";
 import { AppBanner } from "../../../components/util/AppBanner";
+import { Platform } from 'react-native';
+import tw from "twrnc";
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'GuestWelcome'>;
@@ -17,15 +18,30 @@ export const GuestWelcomeScreen: FC<Props> = ({ navigation }) => {
     navigation.navigate('SignIn');
   };
 
+  const isWeb = Platform.OS === 'web';
+
   return (
       <GuestLayout>
-        <View>
-          <AppBanner/>
-          <LogInScreen/>
-        </View>
+        { isWeb ? (
+            <HStack
+                alignItems="center"
+                justifyContent="space-around"
+                space={ 10 }
+                style={ tw`w-full h-full mt-5 px-10` }
+            >
+              <View flex={ 2 }>
+                <AppBanner/>
+              </View>
+              <View flex={ 1 }>
+                <LogInScreen/>
+              </View>
+            </HStack>
+        ) : (
+            <View>
+              <AppBanner/>
+              <LogInScreen/>
+            </View>
+        ) }
       </GuestLayout>
   );
 };
-
-
-

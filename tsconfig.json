@@ -2,8 +2,9 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "experimentalDecorators": true,
     "paths": {
-      "@env": ["node_modules/react-native-dotenv"] // this mapping is relative to "baseUrl"
+      "@env": ["./node_modules/react-native-dotenv"] // this mapping is relative to "baseUrl"
     }
   }
 }

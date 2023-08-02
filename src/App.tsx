@@ -3,6 +3,7 @@ import { GuestAppNavigator } from './navigation/GuestAppNavigator';
 import { useUserContext } from "./context/UserContext";
 import { Spinner, View, Text } from "native-base";
 import { VerifiedAppNavigator } from "./navigation/VerifiedAppNavigator";
+import { UnverifiedAppNavigator } from "./navigation/UnverifiedAppNavigator";
 
 const App = () => {
 
@@ -21,9 +22,13 @@ const App = () => {
     )
   }
 
-  if (user) {
-    return <VerifiedAppNavigator/>
 
+  if (user && user.emailVerified) {
+    return <VerifiedAppNavigator/>
+  }
+
+  if (user) {
+    return <UnverifiedAppNavigator/>
   }
 
   return <GuestAppNavigator/>
