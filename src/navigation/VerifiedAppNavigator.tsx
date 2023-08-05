@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { EditProfileScreen } from "../features/edit-profile/screens/EditProfileScreen";
 import { useSignOut } from "../hooks/use-sign-out";
 import { CreateGroupScreen } from "../features/create-group/screens/CreateGroupScreen";
+import { EditGroupScreen, EditGroupScreenProps } from "../features/edit-group/screens/EditGroupScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -41,6 +42,9 @@ const HomeStack = ({ navigation }: any) => (
           } }
       />
       <Stack.Screen name={ 'CreateGroupScreen' } options={ { title: 'Create Group' } } component={ CreateGroupScreen }/>
+      <Stack.Screen name={ 'EditGroupScreen' } options={ { title: 'Edit Group' } }
+                    component={  (props: EditGroupScreenProps) => <EditGroupScreen {...props}/> }/>
+
     </Stack.Navigator>
 );
 

@@ -12,18 +12,30 @@ export type GroupItemProps = {
 
 export const GroupItemComponent = ({ group, onPress, isSelected }: GroupItemProps) => {
 
-  const containerStyle = isSelected ? tw`bg-sky-100` : tw`bg-white`;
-  const textStyle = isSelected ? tw`text-gray-500` : tw`text-gray-500`;
-
-  console.log('isSelected', isSelected, group.id)
 
   return (
-      <TouchableOpacity
-          style={ [tw`rounded`, containerStyle, tw`px-2 py-3`] }
-          onPress={ onPress }
-          activeOpacity={ 0.7 }
-      >
-        <Text style={ [tw`font-bold`, textStyle] }>{ group.name.toUpperCase() || ' Group name' }</Text>
-      </TouchableOpacity>
+      <View style={ tw`flex flex-row justify-between items-center px-2 hover:bg-sky-700 my-1` }>
+        <View>
+          <Text style={ [tw`font-bold`] }>{ group.name.toUpperCase() || ' Group name' }</Text>
+          <Text style={ [tw`text-gray-500`] }>{ group.description || 'Group description' }</Text>
+        </View>
+        <View>
+          <TouchableOpacity style={ [tw`rounded`, styles.button] }
+                            onPress={ onPress }
+          >
+            <Text style={ [tw`text-white`] }>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#146C94',
+    width: 80,
+  },
+});
