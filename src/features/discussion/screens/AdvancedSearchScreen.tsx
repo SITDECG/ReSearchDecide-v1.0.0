@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { GroupName } from '../../../components/GroupName'
 import { ElementSearch } from '../../../components/ElementSearch'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import { useTopics } from '../../group/hooks/use-topic'
 
 interface RouteParams {
   titles: string[];
@@ -13,6 +14,7 @@ interface RouteParams {
 export const AdvancedSearchScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { topics } = useTopics(); 
   // const { titles} = route.params as RouteParams;
   const handlePress = () => {
     navigation.navigate('ValuationScreen' as never);
@@ -27,15 +29,15 @@ export const AdvancedSearchScreen = () => {
     <Center flex={1}>
       <VStack space={1} alignItems="center" w="90%">
         <View>
-          <GroupName />
+          <GroupName title={"EPN"}/>
         </View>
         <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
           <Text style={styles.buttonText}>Accept</Text>
         </TouchableOpacity>
         <View style={styles.container}>
-          {/* {titles.map((title, index) => (
-            <ElementSearch key={index} title={title} index={index + 1} />
-          ))} */}
+          {topics.map((title, index) => (
+            <ElementSearch key={index} title={title.topic} />
+          ))}
         </View>
       </VStack>
     </Center>

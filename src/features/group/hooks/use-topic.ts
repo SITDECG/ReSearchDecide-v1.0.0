@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTopics, updateTopicOrder } from '../../../api/topics';
-import { Topic } from '../../../api/topicInterface';
+import { Topic } from '../../../model/Topic';
 
 
 export const useTopics = () => {

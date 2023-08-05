@@ -6,8 +6,14 @@ import { GroupName } from '../../../components/GroupName'
 import { ElementDiscussion } from '../../../components/ElementDiscussion'
 import { useNavigation } from '@react-navigation/native'
 import { useTopics } from '../hooks/use-topic'
+import { RootStackParamList } from '../../../navigation/types'
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 export const GroupScreen = () => {
+  // const route = useRoute<RouteProp<RootStackParamList, 'GroupScreen'>>();
+
+  // Obtiene el parámetro enviado desde la pantalla anterior
+  // const param = route.params;
   const navigation = useNavigation();
   const { topics } = useTopics(); 
   // const handlePress = () => {
@@ -28,11 +34,10 @@ export const GroupScreen = () => {
       <VStack space={1} alignItems="center" w="90%">
         <View>
           {/* <GroupName titles={titles} /> */}
-          <GroupName />
+          <GroupName title={"EPN"} />
         </View>
         <View>
           {topics.map((title, index) => (
-            console.log(title),
             <ElementDiscussion key={index} title={title.topic} index={index + 1} />
           ))}
         </View>
@@ -49,7 +54,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     width: '12%',
     height: '8%',
-    padding: 2,
+    paddingTop: 15,
     backgroundColor: '#146C94',
     borderRadius: 6,
   },

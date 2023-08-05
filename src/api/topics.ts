@@ -1,6 +1,6 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-import { Topic } from './topicInterface';
+import { Topic } from '../model/Topic';
 
 // export const getTopics = async (): Promise<any> => {
 //     try {

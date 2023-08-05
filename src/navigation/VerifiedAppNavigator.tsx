@@ -7,6 +7,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { EditProfileScreen } from "../features/edit-profile/screens/EditProfileScreen";
 import { useSignOut } from "../hooks/use-sign-out";
 import { CreateGroupScreen } from "../features/create-group/screens/CreateGroupScreen";
+import { ValuationScreen } from '../features/valuation/screens/ValuationScreen';
+import { GroupScreen } from '../features/group/screens/GroupScreen';
+import { AdvancedSearchScreen } from '../features/discussion/screens/AdvancedSearchScreen';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -41,6 +44,9 @@ const HomeStack = ({ navigation }: any) => (
           } }
       />
       <Stack.Screen name={ 'CreateGroupScreen' } options={ { title: 'Create Group' } } component={ CreateGroupScreen }/>
+      <Stack.Screen name={ 'GroupScreen' } options={ { title: 'Discussion' } } component={ GroupScreen}/>
+      <Stack.Screen name={ 'ValuationScreen' } options={ { title: 'Valuation' } } component={ ValuationScreen}/>
+      <Stack.Screen name={ 'AdvancedSearchScreen' } options={ { title: 'Advanced Search' } } component={ AdvancedSearchScreen}/>
     </Stack.Navigator>
 );
 

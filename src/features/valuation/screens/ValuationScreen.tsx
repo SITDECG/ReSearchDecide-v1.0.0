@@ -18,67 +18,64 @@ import DraggableFlatList, {
 import { ElementSearch } from '../../../components/ElementSearch';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTopics } from '../../group/hooks/use-topic';
-import { Topic } from '../../../api/topicInterface';
-
+import { Topic } from '../../../model/Topic';
+const title: string[] = [
+  'Knee rehabilitation',
+  'NFC System',
+  'Substrate integrated waveguide',
+];
 export const ValuationScreen = () => {
-  const navigation = useNavigation();
-  const { topics, updateTopic} = useTopics();
-  const [data, setData] = useState(topics);
-
+  const { topics } = useTopics(); 
+  const [titles, setTitles] = useState<string[]>([]);
+  const [data, setData] = useState(title);
   useEffect(() => {
-    setData(topics);
+    setTitles(topics.map((topic) => topic.topic));
   }, [topics]);
 
-  // const renderItem = ({ item, ...rest }: ReorderableListRenderItemInfo<Topic>) => (
-  //   <ElementValuation key={item.id} title={item.topic} index={rest.index + 1} />
-  // );
+  function keyExtractor(str: string) {
+    return str;
+  }
 
-  const renderItem = ({ item, drag, isActive  }: RenderItemParams<Topic>) => (
-    <ElementValuation key={item.id} title={item.topic} index={data.findIndex((topic) => topic.id === item.id) + 1} drag={drag} />
-  );
+  function renderItem(info: DragListRenderItemInfo<string>) {
+    const {item, onDragStart, onDragEnd, isActive} = info;
 
-  // const handleReorder = ({ fromIndex, toIndex }: ReorderableListReorderEvent) => {
-  //   const newData = [...data];
-  //   newData.splice(toIndex, 0, newData.splice(fromIndex, 1)[0]);
-  //   setData(newData);
-  // };
+    return (
+      <TouchableOpacity
+        key={item}
+        onPressIn={onDragStart}
+        onPressOut={onDragEnd}>
+        <ElementValuation title={item}  />
+      </TouchableOpacity>
+    );
+  }
 
-  const handleReorder = ({ data }: { data: Topic[] }) => {
-    setData(data);
-  };
+  async function onReordered(fromIndex: number, toIndex: number) {
+    const copy = [...data]; // Don't modify react data in-place
+    const removed = copy.splice(fromIndex, 1);
 
-  const handleSaveOrder = () => {
-    const newOrder = data.map((item) => item.id);
-    updateTopic(newOrder);
-  };
+    copy.splice(toIndex, 0, removed[0]); // Now insert at the new pos
+    setData(copy);
+  }
 
   return (
+    
     <Center flex={1}>
-      <VStack space={1} alignItems="center" w="90%">
-        <View>
-          <GroupName />
-        </View>
-        {/* <ReorderableList
+    <VStack space={1} alignItems="center" w="90%">
+      <View>
+        <GroupName title={"EPN"} />
+      </View>
+      <View>
+        <DragList
           data={data}
-          onReorder={handleReorder}
-          renderItem={renderItem}
-          keyExtractor={(item: Topic) => item.id}
-          dragHandlerStyle={styles.dragHandler}
-          containerStyle={styles.container}
-          listStyle={styles.list}
-          dragItemOverflow={true}
-        /> */}
-        <DraggableFlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item: Topic) => item.id}
-          onDragEnd={handleReorder}
-        />
-        <TouchableOpacity style={styles.buttonContainer} onPress={handleSaveOrder}>
-          <Text style={styles.buttonText}>Save Order</Text>
-        </TouchableOpacity>
-      </VStack>
-    </Center>
+          keyExtractor={keyExtractor}
+          onReordered={onReordered}
+          renderItem={renderItem}/>
+      </View>
+      <TouchableOpacity style={styles.buttonContainer} >
+        <Text style={styles.buttonText}>Accept</Text>
+      </TouchableOpacity>
+    </VStack>
+  </Center>
   );
 };
 

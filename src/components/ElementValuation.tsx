@@ -4,11 +4,11 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 
 interface ElementValuationProps {
   title: string;
-  index: number;
+  index?: number;
   drag?: () => void; // Propiedad drag opcional
 }
 
-export const ElementValuation = ({ title = "", index = 0, drag }: ElementValuationProps) => {
+export const ElementValuation = ({ title = "", index = 0}: ElementValuationProps) => {
   //const [selectedItems, setSelectedItems] = useState([]);
   const [items, setItems] = useState([
     { id: '1', label: 'Novel', selected: false, left: 0 },

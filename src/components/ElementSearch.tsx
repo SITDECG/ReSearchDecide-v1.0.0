@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import PropTypes from 'prop-types'
 import Draggable from 'react-native-draggable'
 
-export const ElementSearch = ({ title = ""}:{title: string}) => {
+export const ElementSearch = ({ title = ""}:{title: string | undefined}) => {
   return (
     <View style={styles.container}>
       <Draggable>

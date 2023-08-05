@@ -13,25 +13,25 @@ import { useNavigation } from '@react-navigation/native';
 //     navigation.navigate('Valuation', { titles });
 //   };
 
-export const GroupName: React.FC = ( ) => {
+export const GroupName = ( { title = ""}:{title: string | undefined}) => {
   const navigation = useNavigation();
-  // const handlePressDiscussion = () => {
-  //   navigation.navigate('Home' as never);
-  // }
+  const handlePressDiscussion = () => {
+    navigation.navigate('GroupScreen' as never);
+  }
 
   const handlePressValuation = () => {
-    navigation.navigate('Valuation' as never);
+    navigation.navigate('ValuationScreen' as never);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>GRUPO VAQUERITOS DE JEHOVA</Text>
+      <Text style={styles.title}>{title}</Text>
       <View style={styles.subContainer}>
         <TouchableOpacity
           style={styles.buttonUp}
-          // onPress={handlePressDiscussion}
+          onPress={handlePressDiscussion}
         >
-          <Text style={styles.textButton}>Discussion</Text>
+          <Text style={styles.textButton}>Recomended Topics</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonGo}
