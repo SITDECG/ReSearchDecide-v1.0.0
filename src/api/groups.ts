@@ -8,31 +8,6 @@ const db = firebase.firestore();
 const groupCollection = db.collection("groups");
 const memberCollection = db.collection("members");
 
-// export const saveGroup = async (group: Group): Promise<void> => {
-//   const user = await getCurrentUser();
-//   // Verify if the "groups" collection exists
-//   const collectionSnapshot = await groupCollection.limit(1).get();
-//   const collectionExists = !collectionSnapshot.empty;
-//
-//   // If the collection does not exist, create an empty document for it
-//   if (!collectionExists) {
-//     await groupCollection.add({});
-//   }
-//
-//   if (user) {
-//     const { uid } = user;
-//
-//     const groupDocRef = await groupCollection.add({
-//       name: group.name,
-//       description: group.description
-//     });
-//
-//     const groupId = groupDocRef.id;
-//
-//     await addMember(uid, groupId, 'admin');
-//   }
-//
-// }
 
 export const saveGroup = async (group: Group): Promise<Group> => {
   const user = await getCurrentUser();
@@ -180,83 +155,7 @@ export const updateMemberRole = async (memberId: string, groupId: string, newRol
   await memberCollection.doc(memberId).update({ role: newRole });
 }
 
-// export const deleteGroupByName = async (groupName: string): Promise<void> => {
-//   const querySnapshot = await groupCollection.where("name", "==", groupName).get();
 
-//   querySnapshot.forEach((doc) => {
-//     doc.ref.delete();
-//   });
-// }
-
-// export const getGroups = async(): Promise<Group[]> => {
-//   try {
-//     const querySnapshot = await groupCollection.get();
-//     const groups: Group[] = [];
-
-//     querySnapshot.forEach((doc) => {
-//       const data = doc.data();
-//       const members: Member[] = data.members.map((member: Member) => {
-//         return {
-//           uid: member.userId,
-//           groupId: member.groupId,
-//           displayName: member.userName,
-//           email: member.email,
-//           role: member.role,
-//         };
-//       });
-
-//       const group: Group = {
-//         id: doc.id,
-//         name: data.name,
-//         description: data.description
-//       };
-
-//       groups.push(group);
-//     });
-
-//     return groups;
-//   } catch (error) {
-//     console.log(error);
-//     return [];
-//   }
-// }
-
-// export const getGroups = async (): Promise<Group[]> => {
-//   try {
-//     const snapshot = await firebase.firestore().collection('groups').get();
-//     console.log('snapshot de firebase', snapshot);
-//     const groups: Promise<Group>[] = snapshot.docs.map(async (doc) => {
-//       const data = doc.data();
-//       console.log('data de firebase', data);
-//       const memberRefs = data.members || [];
-//       const memberPromises = memberRefs.map((ref: { get: () => any; }) => ref.get());
-//       const memberSnapshots = await Promise.all(memberPromises);
-//       const members: Member[] = await Promise.all(memberSnapshots.map(async (snapshot) => {
-//         const memberData = snapshot.data();
-//         const userRef = memberData.user;
-//         console.log('userRef de firebase', userRef);
-//         const userSnapshot = await userRef.get();
-//         const userData = userSnapshot.data();
-//         console.log('userData de firebase', userData);
-//         return {
-//           id: snapshot.id,
-//           name: userData.displayName,
-//           role: memberData.role,
-//         };
-//       }));
-//       return {
-//         id: doc.id,
-//         name: data.name,
-//         description: data.description,
-//         members: members,
-//       };
-//     });
-//     return Promise.all(groups);
-//   } catch (error) {
-//     console.log(error);
-//     return [];
-//   }
-// };
 
 
 

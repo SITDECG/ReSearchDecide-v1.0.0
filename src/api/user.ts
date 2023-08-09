@@ -2,8 +2,9 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { User } from '../model/User';
-import firestore = firebase.firestore;
 
+// const db = firebase.firestore();
+// const userCollection = db.collection("users");
 export const getUser = (): firebase.User | null => firebase.auth().currentUser;
 
 
@@ -22,7 +23,16 @@ export const deleteDBUser = async (email: string): Promise<void> => {
 };
 
 export const saveNewUserDB = async (user: firebase.User | null, userName: string): Promise<void> => {
+  // Verify if the "groups" collection exists
+  const collectionSnapshot = await firebase.firestore().collection("users").limit(1).get();
+  const collectionExists = !collectionSnapshot.empty;
+
+  // If the collection does not exist, create an empty document for it
+  if (!collectionExists) {
+    await firebase.firestore().collection("users").add({});
+  }
   if (user) {
+
     console.log('user', user)
     const { uid, email, displayName, photoURL } = user;
     const userRef = firebase.firestore().collection('users').doc(uid);
