@@ -1,6 +1,0 @@
-[
-  {id: '0', color: 'red', height: 100},
-  {id: '1', color: 'blue', height: 100},
-  {id: '2', color: 'green', height: 100},
-  {id: '3', color: 'violet', height: 100}
-];

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { VStack, Center } from 'native-base'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import { GroupName } from '../../../components/GroupName'
 import { ElementDiscussion } from '../../../components/ElementDiscussion'
 import { useNavigation } from '@react-navigation/native'
@@ -11,30 +11,30 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 
 export const GroupScreen = () => {
   // const route = useRoute<RouteProp<RootStackParamList, 'GroupScreen'>>();
-
-  // Obtiene el parámetro enviado desde la pantalla anterior
   // const param = route.params;
   const navigation = useNavigation();
   const { topics } = useTopics(); 
   // const handlePress = () => {
-  //   const params = { titles: titles };
+  //   const params = { topics: topics };
   //   navigation.navigate('AdvancedSearchScreen', params );
   // };
   const handlePress = () => {
     navigation.navigate('AdvancedSearchScreen' as never);
   };
-  // const titles: string[] = [
-  //   'Investigación sobre las causas del aborto',
-  //   'Group Recommendation',
-  //   'System Recommendation',
-  // ];
+  
+  const windowWidth = Dimensions.get('window').width;
+  const isWeb = windowWidth >= 768;
+  const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
 
   return (
     <Center flex={1}>
-      <VStack space={1} alignItems="center" w="90%">
+      <VStack space={0.5} alignItems="center" w={contentWidth}>
         <View>
           {/* <GroupName titles={titles} /> */}
-          <GroupName title={"EPN"} />
+          <GroupName title={"EPN"} id={0}/>
+        </View>
+        <View >
+          <Text style={styles.text}>For more information, click on a topic</Text>
         </View>
         <View>
           {topics.map((title, index) => (
@@ -42,7 +42,7 @@ export const GroupScreen = () => {
           ))}
         </View>
         <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
-          <Text style={styles.buttonText}>Advanced Search</Text>
+          <Text style={styles.buttonText}>Combined Search</Text>
         </TouchableOpacity>
       </VStack>
     </Center>
@@ -50,11 +50,14 @@ export const GroupScreen = () => {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignSelf: 'flex-start',
+  },
   buttonContainer: {
     alignSelf: 'flex-end',
-    width: '12%',
+    width: '18%',
     height: '8%',
-    paddingTop: 15,
+    paddingTop: 10,
     backgroundColor: '#146C94',
     borderRadius: 6,
   },
@@ -64,8 +67,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
+  text: {
+    color: 'rgba(20, 108, 148, 0.9)',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 })
-
-// GroupScreen.propTypes = {
-//   navigation: PropTypes.object.isRequired,
-// }

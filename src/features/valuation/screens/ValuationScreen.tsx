@@ -1,79 +1,119 @@
 import React, { useState, useEffect  } from 'react';
-import PropTypes from 'prop-types';
 import { VStack, Center } from 'native-base';
-import { View, Text, StyleSheet, TouchableOpacity,Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { GroupName } from '../../../components/GroupName';
 import { ElementValuation } from '../../../components/ElementValuation';
 import { useNavigation } from '@react-navigation/native';
 import DragList, { DragListRenderItemInfo } from "react-native-draglist";
-import { SwipeListView } from 'react-native-swipe-list-view';
-import { List, arrayMove } from 'react-movable';
-import ReorderableList, {
-  ReorderableListRenderItemInfo,
-  ReorderableListReorderEvent,
-} from 'react-native-reorderable-list';
-import DraggableFlatList, {
-  RenderItemParams,
-} from 'react-native-draggable-flatlist';
-import { ElementSearch } from '../../../components/ElementSearch';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTopics } from '../../group/hooks/use-topic';
-import { Topic } from '../../../model/Topic';
-const title: string[] = [
-  'Knee rehabilitation',
-  'NFC System',
-  'Substrate integrated waveguide',
-];
+import { useTopicsScore } from '../hooks/use-topic-score';
+import { useTopicScoreUpdater} from '../hooks/use-topic-score-updater';
+
+const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: any, message: any, onConfirm: any, onCancel: any}) => {
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onCancel}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <View>
+            <Text style={styles.modalMessage}>{message}</Text>
+          </View>
+          <View style={styles.modalButtons}>
+            <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
+              <Text style={styles.buttonText}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 export const ValuationScreen = () => {
-  const { topics } = useTopics(); 
-  const [titles, setTitles] = useState<string[]>([]);
-  const [data, setData] = useState(title);
+  const navigation = useNavigation();
+  const { topics } = useTopicsScore(); 
+  const { updateTopicScore } = useTopicScoreUpdater(); 
+
+  const [data, setData] = useState<any[]>([]);
   useEffect(() => {
-    setTitles(topics.map((topic) => topic.topic));
+    setData(topics.map((topic) => topic.topic));
   }, [topics]);
+
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
+
+  const handleOpenConfirmation = () => {
+    setIsConfirmationVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsConfirmationVisible(false);
+  };
 
   function keyExtractor(str: string) {
     return str;
   }
 
   function renderItem(info: DragListRenderItemInfo<string>) {
-    const {item, onDragStart, onDragEnd, isActive} = info;
-
+    const {item, onDragStart, isActive} = info;
     return (
       <TouchableOpacity
         key={item}
         onPressIn={onDragStart}
-        onPressOut={onDragEnd}>
-        <ElementValuation title={item}  />
+        >
+        <ElementValuation title={item} />
       </TouchableOpacity>
     );
   }
 
+  const handlePress = () => {
+    data.map((item, index) => {
+      updateTopicScore(item, index);
+    });
+    setIsConfirmationVisible(false);
+    navigation.navigate('DecisionScreen' as never);
+  };
+
   async function onReordered(fromIndex: number, toIndex: number) {
+    const finalIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
     const copy = [...data]; // Don't modify react data in-place
     const removed = copy.splice(fromIndex, 1);
 
-    copy.splice(toIndex, 0, removed[0]); // Now insert at the new pos
+    copy.splice(finalIndex, 0, removed[0]); // Now insert at the new pos
     setData(copy);
   }
 
   return (
     
     <Center flex={1}>
-    <VStack space={1} alignItems="center" w="90%">
+    <VStack space={1} >
       <View>
-        <GroupName title={"EPN"} />
+        <GroupName title={"EPN"} id={1}/>
       </View>
-      <View>
+      <View >
+        <Text style={styles.text}>Order the topics according to your appreciation and rate each one.</Text>
+      </View>
+      <View style={styles.container}>
         <DragList
           data={data}
           keyExtractor={keyExtractor}
           onReordered={onReordered}
           renderItem={renderItem}/>
       </View>
-      <TouchableOpacity style={styles.buttonContainer} >
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleOpenConfirmation}>
         <Text style={styles.buttonText}>Accept</Text>
       </TouchableOpacity>
+      <ConfirmationModal
+        visible={isConfirmationVisible}
+        message="Are you sure you want to proceed? This action cannot be undone."
+        onConfirm={handlePress}
+        onCancel={handleCancel}
+      />
     </VStack>
   </Center>
   );
@@ -81,24 +121,13 @@ export const ValuationScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: '100%',
-  },
-  list: {
-    flex: 1,
-  },
-  dragHandler: {
-    paddingVertical: 12,
-    paddingLeft: 10,
-    paddingRight: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 0,
   },
   buttonContainer: {
     alignSelf: 'flex-end',
-    width: '12%',
-    height: '8%',
-    padding: 2,
+    width: '16%',
+    height: '4%',
+    paddingTop: 4,
     backgroundColor: '#146C94',
     borderRadius: 6,
   },
@@ -108,10 +137,44 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
+  text: {
+    color: 'rgba(20, 108, 148, 0.9)',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    gap: 10,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '49%',
+  },
+  modalMessage: {
+    color: '#424242',
+    fontSize: 20,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 20,
+  },
+  cancelButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+  },
+  confirmButton: {
+    backgroundColor: '#146C94',
+    padding: 10,
+    borderRadius: 5,
+  },
 });
-
-
-// ValuationScreen.propTypes = {
-//   navigation: PropTypes.object.isRequired,
-//   route: PropTypes.array.isRequired,
-// }

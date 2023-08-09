@@ -1,58 +1,144 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useState, useEffect } from 'react'
 import { VStack, Center } from 'native-base'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Linking } from 'react-native'
 import { GroupName } from '../../../components/GroupName'
-import { ElementSearch } from '../../../components/ElementSearch'
-import { useNavigation, useRoute } from '@react-navigation/native'
 import { useTopics } from '../../group/hooks/use-topic'
-
-interface RouteParams {
-  titles: string[];
-}
+// import CheckBox from '@react-native-community/checkbox';
+import { CheckBox, Icon } from '@rneui/themed';
 
 export const AdvancedSearchScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
   const { topics } = useTopics(); 
-  // const { titles} = route.params as RouteParams;
-  const handlePress = () => {
-    navigation.navigate('ValuationScreen' as never);
+
+  const [data, setData] = useState<any[]>([]);
+  useEffect(() => {
+    setData(topics.map((item, index) => ({ id: String(index + 1), title: item.topic, checked: false })));
+  }, [topics]);
+
+  const handleCheck = (itemId: string) => {
+    setData((prevData) =>
+      prevData.map((item) =>
+        item.id === itemId ? { ...item, checked: !item.checked } : item
+      )
+    );
   };
-  const titles: string[] = [
-    'Investigación sobre las causas del aborto',
-    'Group Recommendation',
-    'System Recommendation',
-  ];
+
+  const handleSearch = () => {
+    const selectedItems = data.filter((item) => item.checked);
+    const query = selectedItems.map((item) => item.title).join('+');
+    const url = `https://scholar.google.com/scholar?q=${query}`
+    Linking.openURL(url)
+  };
+
+  const renderItem = ({ item }: { item: { id: string; title: string; checked: boolean } }) => (
+    // <TouchableOpacity style={[styles.itemContainer, item.checked ? styles.buttonUp : null]} onPress={() => handleCheck(item.id)}>
+    //   <CheckBox
+    //     checked={item.checked}
+    //     onPress={() => handleCheck(item.id)}
+    //     iconType="material-community"
+    //     checkedIcon="checkbox-marked"
+    //     uncheckedIcon={'checkbox-blank-outline'}
+    //   />
+    //   <Text style={styles.titleText}>{item.id}</Text>
+    //   <Text style={styles.titleText}>{item.title}</Text>
+    // </TouchableOpacity>
+      <View style={styles.containerElement}>
+        <TouchableOpacity style={[styles.itemContainer, item.checked ? styles.buttonUp : null]} onPress={() => handleCheck(item.id)}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.countText}>{item.id}</Text>
+        </View>
+        <View style={styles.contentContainer}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>{item.title}</Text>
+          </View>
+        </View>
+        </TouchableOpacity>
+    </View>
+  );
 
   return (
     <Center flex={1}>
-      <VStack space={1} alignItems="center" w="90%">
-        <View>
-          <GroupName title={"EPN"}/>
-        </View>
-        <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
-          <Text style={styles.buttonText}>Accept</Text>
-        </TouchableOpacity>
-        <View style={styles.container}>
-          {topics.map((title, index) => (
-            <ElementSearch key={index} title={title.topic} />
-          ))}
-        </View>
-      </VStack>
-    </Center>
-  )
-}
+    <VStack space={1} alignItems="center" w="50%" >
+      <View>
+        <GroupName title={"EPN"} id={0}/>
+      </View>
+      <View >
+        <Text style={styles.text}>Select more than one topic for more information.</Text>
+      </View>
+      <View style={styles.container}>
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleSearch}>
+        <Text style={styles.buttonText}>Search</Text>
+      </TouchableOpacity>
+    </VStack>
+  </Center>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'flex-start',
+    padding: 0,
+  },
+  containerElement: {
+    width: '100%',
+    paddingRight: 20,
+    borderRadius: 17,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 20,
+  },
+  countText: {
+    color: '#146C94',
+    fontSize: 16,
+    fontWeight: '900',
+    wordWrap: 'break-word',
+  },
+  buttonUp: {
+    padding: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    backgroundColor: 'rgba(25, 167, 206, 0.15)',
+    borderRadius: 5,
+    justifyContent: 'flex-start',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemText: {
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  contentContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    gap: 5,
+    paddingRight: 20,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  titleText: {
+    color: '#424242',
+    fontSize: 20,
+    fontWeight: '500',
+    wordWrap: 'break-word',
   },
   buttonContainer: {
-    // alignSelf: 'flex-center',
-    width: '10%',
-    height: '10%',
-    padding: 2,
+    alignSelf: 'flex-end',
+    width: '12%',
+    height: '8%',
+    paddingTop: 4,
     backgroundColor: '#146C94',
     borderRadius: 6,
   },
@@ -62,16 +148,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-})
-AdvancedSearchScreen.propTypes = {
-  navigation: PropTypes.object.isRequired,
-  // route: PropTypes.shape({
-  //   params: PropTypes.shape({
-  //     titles: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  //   }).isRequired,
-  // }).isRequired,
-}
-// AdvancedSearchScreen.propTypes = {
-//   navigation: PropTypes.object.isRequired,
-//   route: PropTypes.array.isRequired,
-// }
+  text: {
+    color: 'rgba(20, 108, 148, 0.9)',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+});
+
