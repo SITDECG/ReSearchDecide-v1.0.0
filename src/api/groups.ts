@@ -140,6 +140,19 @@ export const getGroupMembers = async (groupId: string): Promise<Member[]> => {
   return members;
 };
 
+export const getGroupById = async (groupId: string): Promise<Group | null> => {
+  const groupDoc = await groupCollection.doc(groupId).get();  
+  if (groupDoc.exists) {
+    const groupData = groupDoc.data() as Group;
+    const group: Group = {
+      id: groupId,
+      name: groupData.name,
+      description: groupData.description,
+    };
+    return group;
+  }
+  return null;
+};
 
 export const deleteGroupById = async (groupId: string): Promise<void> => {
   await groupCollection.doc(groupId).delete();
