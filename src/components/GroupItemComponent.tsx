@@ -23,7 +23,7 @@ export const GroupItemComponent = ({ group, onPress, isSelected }: GroupItemProp
           <TouchableOpacity style={ [tw`rounded`, styles.button] }
                             onPress={ onPress }
           >
-            <Text style={ [tw`text-white`] }>Edit</Text>
+            <Text style={ [tw`text-white`] }>Go</Text>
           </TouchableOpacity>
         </View>
       </View>
