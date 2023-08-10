@@ -14,11 +14,11 @@ export const GroupListComponent = ({ groups }: GroupListProps) => {
   const navigation = useNavigation();
   const [selectedItem, setSelectedItem] = React.useState<Group | null>(null)
   const handlePress = () => {
-    // const param: MyParam = {
-    //   id: selectedItem?.id,
-    //   name: selectedItem?.name
-    // };
-    // navigation.navigate(('GroupScreen' as never, {param }) as never);
+    const param: MyParam = {
+      id: selectedItem?.id,
+      name: selectedItem?.name
+    };
+    navigation.navigate(('GroupScreen' as never, {param }) as never);
     navigation.navigate('GroupScreen' as never);
   };
   const isSelected = (group: Group) => {

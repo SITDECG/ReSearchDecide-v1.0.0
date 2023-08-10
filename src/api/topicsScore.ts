@@ -42,6 +42,34 @@ import { TopicScore } from '../model/TopicScore';
     }
   };
 
+  export const getTopicsScoreRealTime = async (): Promise<TopicScore[]> => {
+    try {
+      const auxTopics: TopicScore[] = [];
+      const snapshot = await firebase.firestore().collection('topicsScore').orderBy("score","asc").onSnapshot((querySnapshot) => {
+        const topics = querySnapshot.docs.map((doc) => doc.data());
+        topics.forEach((topic) => {
+          const auxTopic: TopicScore = {
+            id: topic.id,
+            topic: topic.topic,
+            score: topic.score,
+            attractive: topic.attractive,
+            novel: topic.novel,
+            used: topic.used,
+            modest: topic.modest,
+          };
+          auxTopics.push(auxTopic);
+        });
+      });
+      return auxTopics;
+    } catch (error) {
+      console.log(error);
+
+      return [];
+    }
+  };
+  
+
+
   export const updateTopicScoreById = async (topicId: string, score: number): Promise<void> => {
     try {
       await firebase.firestore().collection('topicsScore').doc(topicId).update({
