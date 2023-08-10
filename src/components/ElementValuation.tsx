@@ -1,28 +1,48 @@
-import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { useUpdateBooleanProperties } from '../features/valuation/hooks/use-update-boolean-properties'
 
 interface ElementValuationProps {
   title: string;
 }
 
 export const ElementValuation = ({ title = ""}: ElementValuationProps) => {
-  //const [selectedItems, setSelectedItems] = useState([]);
   const [items, setItems] = useState([
     { id: '1', label: 'Novel', selected: false, left: 0 },
-    { id: '2', label: 'Attractive', selected: false, left: 7 },
-    { id: '3', label: 'Trend', selected: false, left: 14 },
-    { id: '4', label: 'Obsolete', selected: false, left: 21 },
-    { id: '5', label: 'Unfamiliar', selected: false, left: 28 },
+    { id: '2', label: 'Attractive', selected: false, left: 5 },
+    { id: '3', label: 'Trend', selected: false, left: 10 },
+    { id: '4', label: 'Obsolete', selected: false, left: 15 },
+    { id: '5', label: 'Unfamiliar', selected: false, left: 20 },
   ])
-  const handleItemClick = (itemId: string ) => {
+
+  const { updateProperties } = useUpdateBooleanProperties();
+
+  const handleItemClick = (itemId: any ) => {
     setItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === itemId ? { ...item, selected: !item.selected } : item
+        item.id === itemId.id ? { ...item, selected: !item.selected } : item
       )
     )
   }
-  const selectedItems = items.filter((item) => item.selected)
+  
+  useEffect(() => {
+    const selectedItem = items.find(item => item.selected);
+    if (selectedItem) {
+      const propertiesToUpdate: { [key: string]: boolean } = {};
+      if (selectedItem.id === '1') {
+        propertiesToUpdate.novel = true;
+      } else if (selectedItem.id === '2') {
+        propertiesToUpdate.attractive = true;
+      } else if (selectedItem.id === '3') {
+        propertiesToUpdate.trend = true;
+      } else if (selectedItem.id === '4') {
+        propertiesToUpdate.obsolete = true;
+      } else if (selectedItem.id === '5') {
+        propertiesToUpdate.unfamiliar = true;
+      }
+      updateProperties(title, propertiesToUpdate);
+    }
+  }, [items]);
 
   return (
     <View style={styles.container}>
@@ -40,24 +60,12 @@ export const ElementValuation = ({ title = ""}: ElementValuationProps) => {
               item.selected ? styles.selectedItem : null,
               { left: item.left },
             ]}
-            onPress={() => handleItemClick(item.id)}
+            onPress={() => handleItemClick(item)}
           >
             <Text style={styles.text}>{item.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      {/* <View style={styles.containerSectionB}>
-        <View style={styles.containerSectionA}>
-          <Text style={styles.text}>
-            Elementos seleccionados: {selectedItems.length}
-          </Text>
-          {selectedItems.map((item) => (
-            <Text key={item.id} style={styles.text}>
-              {item.label}
-            </Text>
-          ))}
-        </View>
-      </View> */}
     </View>
   )
 }
@@ -94,16 +102,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   item: {
-    width: 84,
-    height: 36,
-    borderRadius: 20,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(150, 152, 155, 0.3)',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
   },
   text: {
     color: '#424242',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
   },

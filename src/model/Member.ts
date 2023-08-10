@@ -4,4 +4,5 @@ export interface Member {
   userName: string;
   email: string;
   role: string;
+  vote: boolean;
 }

@@ -1,6 +1,5 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
-import PropTypes from 'prop-types'
 
 const handleTitlePress = (text: string) => {
   const query = encodeURIComponent(text)
@@ -24,11 +23,6 @@ export const ElementDiscussion = ({ title = "", index = 0}:{title: string, index
     </View>
   )
 }
-
-// ElementDiscussion.propTypes = {
-//   title: PropTypes.string.isRequired,
-//   index: PropTypes.number.isRequired,
-// }
 
 const styles = StyleSheet.create({
   container: {

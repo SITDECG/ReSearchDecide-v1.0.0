@@ -1,12 +1,16 @@
 import React, { useState, useEffect  } from 'react';
 import { VStack, Center } from 'native-base';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions } from 'react-native';
 import { GroupName } from '../../../components/GroupName';
 import { ElementValuation } from '../../../components/ElementValuation';
 import { useNavigation } from '@react-navigation/native';
 import DragList, { DragListRenderItemInfo } from "react-native-draglist";
 import { useTopicsScore } from '../hooks/use-topic-score';
 import { useTopicScoreUpdater} from '../hooks/use-topic-score-updater';
+import { useUpdateMemberVote } from '../hooks/use-update-member-vote';
+import { getUser} from '../../../api/user';
+import { useMemberVote } from '../../group/hooks/use-member-vote';
+import { useGetGroup } from '../../../hooks/use-get-group'
 
 const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: any, message: any, onConfirm: any, onCancel: any}) => {
   return (
@@ -37,8 +41,12 @@ const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: a
 
 export const ValuationScreen = () => {
   const navigation = useNavigation();
+  const user = getUser(); 
+  const { vote } = useMemberVote(user?.uid || '');
+  const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopicsScore(); 
   const { updateTopicScore } = useTopicScoreUpdater(); 
+  const { updateVote } = useUpdateMemberVote();
 
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
@@ -76,6 +84,10 @@ export const ValuationScreen = () => {
       updateTopicScore(item, index);
     });
     setIsConfirmationVisible(false);
+    const user = getUser();
+    if (user) {
+      updateVote(user.uid, true);
+    }
     navigation.navigate('DecisionScreen' as never);
   };
 
@@ -88,17 +100,20 @@ export const ValuationScreen = () => {
     setData(copy);
   }
 
+  const windowWidth = Dimensions.get('window').width;
+  const isWeb = windowWidth >= 768;
+  const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
+  
   return (
-    
     <Center flex={1}>
     <VStack space={1} >
       <View>
-        <GroupName title={"EPN"} id={1}/>
+        <GroupName title={group?.name} id={1}/>
       </View>
       <View >
         <Text style={styles.text}>Order the topics according to your appreciation and rate each one.</Text>
       </View>
-      <View style={styles.container}>
+      <View >
         <DragList
           data={data}
           keyExtractor={keyExtractor}
@@ -120,9 +135,6 @@ export const ValuationScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 0,
-  },
   buttonContainer: {
     alignSelf: 'flex-end',
     width: '16%',

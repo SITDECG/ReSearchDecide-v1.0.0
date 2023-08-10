@@ -4,6 +4,7 @@ export   interface TopicScore {
     score: number;
     attractive:boolean;
     novel:boolean;
-    used:boolean;
-    modest:boolean;
+    trend:boolean;
+    unfamiliar:boolean;
+    obsolete:boolean;
   }

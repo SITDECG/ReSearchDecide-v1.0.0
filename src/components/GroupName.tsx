@@ -1,19 +1,9 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 
-// export const GroupName = ({ navigation, route }) => {
-//   const { titles } = route.params;
-//   const handlePressDiscussion = () => {
-//     navigation.navigate('Home');
-//   };
-
-//   const handlePressValuation = () => {
-//     navigation.navigate('Valuation', { titles });
-//   };
 interface GroupNameProps {
-  title: string;
+  title?: string;
   id: number;
 }
 export const GroupName: React.FC<GroupNameProps> = ({ title, id }) => {
@@ -79,7 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 38,
+    gap: 30,
   },
   buttonUp: {
     padding: 10,

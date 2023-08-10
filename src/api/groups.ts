@@ -93,6 +93,7 @@ export const addMember = async (uid: string, idGroup: string, role: string): Pro
         displayName,
         email,
         role: role,
+        vote: false,
       });
 
       // Return the ID of the newly created member
@@ -157,6 +158,7 @@ export const getGroupMembers = async (groupId: string): Promise<Member[]> => {
       userName: memberData.displayName,
       email: memberData.email,
       role: memberData.role,
+      vote: memberData.vote,
     };
     members.push(member);
   });
@@ -164,7 +166,7 @@ export const getGroupMembers = async (groupId: string): Promise<Member[]> => {
   return members;
 };
 
-export const getGroupById = async (groupId: string): Promise<Group | null> => {
+export const getGroupByIdd = async (groupId: string): Promise<Group | null> => {
   const groupDoc = await groupCollection.doc(groupId).get();  
   if (groupDoc.exists) {
     const groupData = groupDoc.data() as Group;
@@ -176,6 +178,22 @@ export const getGroupById = async (groupId: string): Promise<Group | null> => {
     return group;
   }
   return null;
+};
+
+export const getGroupById = async (id: string): Promise<Group | null> => {
+  try {
+    const groupDoc = await firebase.firestore().collection('groups').doc(id).get();
+
+    if (groupDoc.exists) {
+      const groupData = groupDoc.data() as Group;
+      return groupData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log('Error getting group by id:', error);
+    return null;
+  }
 };
 
 export const deleteGroupById = async (groupId: string): Promise<void> => {

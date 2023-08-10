@@ -3,6 +3,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { User } from '../model/User';
 import firestore = firebase.firestore;
+import { Member } from '../model/Member';
 
 export const getUser = (): firebase.User | null => firebase.auth().currentUser;
 
@@ -179,7 +180,48 @@ export const updateDisplayName = async ({ displayName }: {displayName: string}):
   }
 };
 
+export const updateMemberVote = async ( uid: string, newVote: boolean): Promise<void> => {
+  try {
+    const memberRef = firebase.firestore().collection('members').doc(uid);
+    await memberRef.update({ vote: newVote });
+  } catch (error) {
+    console.log('Error updating member vote:', error);
+  }
+};
 
+export const getMemberVoteByUserId = async (userId: string | null): Promise<boolean | null> => {
+  try {
+    const memberRef = firebase.firestore().collection('members').where('uid', '==', userId);
+    const querySnapshot = await memberRef.get();
 
+    if (!querySnapshot.empty) {
+      const memberDoc = querySnapshot.docs[0];
+      const memberData = memberDoc.data();
+      const vote = memberData.vote || false; // Default to false if vote attribute is missing
+      return vote;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log('Error getting member vote by userId:', error);
+    return null;
+  }
+};
 
+export const getMemberByUserId = async (userId: string): Promise<Member | null> => {
+  try {
+    const memberRef = firebase.firestore().collection('members').where('uid', '==', userId);
+    const querySnapshot = await memberRef.get();
 
+    if (!querySnapshot.empty) {
+      const memberDoc = querySnapshot.docs[0];
+      const memberData = memberDoc.data() as Member;
+      return memberData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log('Error getting member by userId:', error);
+    return null;
+  }
+};

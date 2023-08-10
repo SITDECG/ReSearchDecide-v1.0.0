@@ -29,8 +29,9 @@ import { TopicScore } from '../model/TopicScore';
           score: topic.score,
           attractive: topic.attractive,
           novel: topic.novel,
-          used: topic.used,
-          modest: topic.modest,
+          trend: topic.trend,
+          obsolete: topic.obsolete,
+          unfamiliar: topic.unfamiliar,
         };
         auxTopics.push(auxTopic);
       });
@@ -66,3 +67,18 @@ import { TopicScore } from '../model/TopicScore';
       console.log('Error updating topic score:', error);
     }
   };
+
+  export const updateBooleanProperties = async (title: string, propertiesToUpdate: Partial<TopicScore>): Promise<void> => {
+    try {
+      const topicRef = firebase.firestore().collection('topicsScore');
+      const querySnapshot = await topicRef.where('topic', '==', title).get();
+  
+      if (!querySnapshot.empty) {
+        const topicDoc = querySnapshot.docs[0];
+        await topicDoc.ref.update(propertiesToUpdate);
+      }
+    } catch (error) {
+      console.log('Error updating boolean properties:', error);
+    }
+  };
+  

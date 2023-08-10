@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { useEffect } from 'react'
 import { VStack, Center } from 'native-base'
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import { GroupName } from '../../../components/GroupName'
 import { ElementDiscussion } from '../../../components/ElementDiscussion'
 import { useNavigation } from '@react-navigation/native'
 import { useTopics } from '../hooks/use-topic'
-import { RootStackParamList } from '../../../navigation/types'
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { getUser} from '../../../api/user'
+import { useMemberVote } from '../hooks/use-member-vote'
+import { useGetGroup } from '../../../hooks/use-get-group'
 
 export const GroupScreen = () => {
-  // const route = useRoute<RouteProp<RootStackParamList, 'GroupScreen'>>();
-  // const param = route.params;
   const navigation = useNavigation();
-  const { topics } = useTopics(); 
-  // const handlePress = () => {
-  //   const params = { topics: topics };
-  //   navigation.navigate('AdvancedSearchScreen', params );
-  // };
+  const user = getUser(); 
+  const { vote } = useMemberVote(user?.uid || '');
+
+  console.log(vote);
+  if (vote?.vote) {
+    navigation.navigate('DecisionScreen' as never);
+  }
+
+  const { group } = useGetGroup(vote?.groupId|| '');
+  const { topics } = useTopics();
   const handlePress = () => {
     navigation.navigate('AdvancedSearchScreen' as never);
   };
@@ -30,8 +33,7 @@ export const GroupScreen = () => {
     <Center flex={1}>
       <VStack space={0.5} alignItems="center" w={contentWidth}>
         <View>
-          {/* <GroupName titles={titles} /> */}
-          <GroupName title={"EPN"} id={0}/>
+          <GroupName title={group?.name} id={0}/>
         </View>
         <View >
           <Text style={styles.text}>For more information, click on a topic</Text>
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignSelf: 'flex-end',
-    width: '18%',
+    width: '20%',
     height: '8%',
     paddingTop: 10,
     backgroundColor: '#146C94',
