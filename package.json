@@ -3,7 +3,9 @@
   "jest": {
     "testMatch": [
       "**/*.steps.ts"
-    ]
+    ],
+    "setupFiles": ["./src/api/index.ts"]
+    
   },
   "version": "1.0.0",
   "main": "src/Root.tsx",
@@ -29,6 +31,7 @@
     "@react-navigation/drawer": "^6.6.3",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
+    "@types/jest": "^29.5.3",
     "@rneui/themed": "^4.0.0-rc.8",
     "expo": "~48.0.18",
     "expo-status-bar": "~1.4.4",

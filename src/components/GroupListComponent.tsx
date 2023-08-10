@@ -34,7 +34,8 @@ export const GroupListComponent = ({ groups }: GroupListProps) => {
                     group={ item }
                     onPress={handlePress}
                     isSelected={ selectedItem?.id === item.id }
-                /> }
+                />
+            }
             keyExtractor={ ({ id }) => id }
         />
       </View>

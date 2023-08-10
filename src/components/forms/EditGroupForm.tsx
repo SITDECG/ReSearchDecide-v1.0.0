@@ -10,9 +10,12 @@ import { Group } from "../../model/Group";
 import { useUsers } from "../../hooks/use-users";
 import { ScrollView } from "native-base";
 import MembersListComponent from "../MembersListComponent";
-import { useMembersList } from "../../hooks/use-members-list";
+import { useDeleteGroup } from "../../features/edit-group/hooks/use-delete-group";
+import { useNavigation } from "@react-navigation/native";
+import { EditGroupScreen } from "../../features/edit-group/screens/EditGroupScreen";
+import { HomeScreen } from "../../features/home/screens/HomeScreen";
 
-export type CreateGroupFormValues = {
+export type EditGroupFormValues = {
   group: Group;
 };
 
@@ -25,17 +28,23 @@ const buildValidationSchema = () => {
   });
 };
 
-export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, group }: any) => {
+export const EditGroupForm = ({ onSubmit, buttonText, isLoading, group }: {
+  onSubmit: any,
+  buttonText: string,
+  isLoading: boolean,
+  group: Group
+}) => {
 
+  const navigation = useNavigation();
 
   const initialValues = {
     group: {
-      id: '',
-      name: '',
-      description: '',
+      id: group.id,
+      name: group.name,
+      description: group.description,
     },
   };
-  const handleSubmit = (values: CreateGroupFormValues) => {
+  const handleSubmit = (values: EditGroupFormValues) => {
     onSubmit(values);
   };
 
@@ -51,13 +60,26 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, group }: any)
 
   const [modalVisible, setModalVisible] = useState(false);
   const users = useUsers();
-  const isGroupCreated = group !== '';
+  const isGroupCreated = group.id !== '';
 
   const [isMembersAdded, setMembersAdded] = useState(false);
 
   const handleMembersAdded = () => {
     setMembersAdded(true);
     setModalVisible(false);
+  };
+
+  const { deleteGroup } = useDeleteGroup();
+
+  const handleDeleteClick = async () => {
+    try {
+      await deleteGroup(group.id);
+      navigation.navigate('Home' as never);
+      console.log("Group deleted successfully");
+
+    } catch (error) {
+      console.error("Error deleting group:", error);
+    }
   };
 
   return (
@@ -91,12 +113,22 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, group }: any)
           ) }
 
           <TouchableOpacity
-              style={ [tw`rounded my-2`, styles.button] }
+              style={ [tw`rounded mt-2 mb-1`, styles.button] }
               onPress={ () => formik.handleSubmit() }
           >
             <View style={ tw`flex-row items-center gap-2` }>
-              <FontAwesomeIcon icon={ icons.add } style={ tw`text-white` }/>
+              <FontAwesomeIcon icon={ icons.edit } style={ tw`text-white` }/>
               <Text style={ tw`text-white` }>{ buttonText }</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+              style={ [tw`rounded`, styles.buttonDelete] }
+              onPress={ () => handleDeleteClick() }
+          >
+            <View style={ tw`flex-row items-center gap-2` }>
+              <FontAwesomeIcon icon={ icons.trash } style={ tw`text-white` }/>
+              <Text style={ tw`text-white` }>Delete group</Text>
             </View>
           </TouchableOpacity>
 
@@ -152,7 +184,7 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, group }: any)
               <ScrollView style={ tw`w-full` }>
                 <View style={ tw`w-full` }>
                   <Text style={ tw`text-xl font-bold my-4 text-center` }>User list</Text>
-                  <UserListComponent users={ users } groupId={ group } onMembersAdded={ handleMembersAdded }/>
+                  <UserListComponent users={ users } groupId={ group.id } onMembersAdded={ handleMembersAdded }/>
                 </View>
               </ScrollView>
             </View>
@@ -202,6 +234,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     backgroundColor: '#146C94',
+  },
+  buttonDelete: {
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#FF0000',
   },
   disabledButton: {
     backgroundColor: '#CCCCCC', // Cambiar por el color deseado para el botón deshabilitado

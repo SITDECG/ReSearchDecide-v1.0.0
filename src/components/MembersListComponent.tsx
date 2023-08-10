@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native'; // Import TouchableOpacity
+import { Text, View, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native'; // Import TouchableOpacity
 import { useMembersList } from "../hooks/use-members-list";
 import { Member } from "../model/Member";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import icons from "../../assets/incons";
 import tw from "twrnc";
+import { Group } from "../model/Group";
+import { useDeleteMember } from "../features/edit-group/hooks/use-delete-member";
+import { ActivityIndicatorComponent } from "./util/ActivityIndicatorComponent";
+import ErrorMessage from "./util/ErrorMessage";
 
 type MembersListComponentProps = {
-  groupId: string;
+  group: Group;
 };
 
-const MembersListComponent = ({ groupId }: MembersListComponentProps) => {
+const MembersListComponent = ({ group }: MembersListComponentProps) => {
 
-  const [members, refreshMembers] = useMembersList(groupId);
+  const [members, refreshMembers] = useMembersList(group?.id);
 
   const [searchValue, setSearchValue] = useState('');
   const handleSearch = (value: string) => {
@@ -34,6 +38,17 @@ const MembersListComponent = ({ groupId }: MembersListComponentProps) => {
     };
   }, []);
 
+  const [handleDeleteMember, { isLoading, error, isDeleted }] = useDeleteMember();
+
+  const handleDeleteClick = async (member: Member) => {
+    try {
+      await handleDeleteMember(String(member?.id));
+    } catch (error) {
+      console.log("Error deleting member:", error);
+    }
+  };
+
+
   return (
       <View>
 
@@ -46,6 +61,9 @@ const MembersListComponent = ({ groupId }: MembersListComponentProps) => {
               value={ searchValue }
           />
         </View>
+
+        { isLoading && <ActivityIndicatorComponent isLoading={ isLoading }/> }
+        { error && <ErrorMessage error={ error }/> }
 
         <View style={ { flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 8 } }>
           <TouchableOpacity onPress={ refreshMembers } style={ { padding: 8 } }>
@@ -60,8 +78,17 @@ const MembersListComponent = ({ groupId }: MembersListComponentProps) => {
           <FlatList
               data={ filteredMembers }
               renderItem={ ({ item }) => (
-                  <View style={ { paddingVertical: 4 } }>
+                  <View style={ [{ paddingVertical: 4 }, tw`flex flex-row justify-between`] }>
                     <Text>{ item.userName }</Text>
+                    <TouchableOpacity
+                        onPress={ () => handleDeleteClick(item) }
+                        style={ [{ padding: 8 }, styles.button, tw`rounded`] }
+                    >
+                      <View style={ tw`flex flex-row items-center gap-2` }>
+                        <FontAwesomeIcon icon={ icons.trash } size={ 15 } color={ '#fff' }/>
+                        <Text style={ tw`text-white` }>Delete</Text>
+                      </View>
+                    </TouchableOpacity>
                   </View>
               ) }
               keyExtractor={ (item) => item.userId }
@@ -73,3 +100,14 @@ const MembersListComponent = ({ groupId }: MembersListComponentProps) => {
 };
 
 export default MembersListComponent;
+
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#146C94',
+    width: 80,
+  },
+});
