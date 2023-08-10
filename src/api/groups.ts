@@ -45,6 +45,17 @@ export const saveGroup = async (group: Group): Promise<Group> => {
   throw new Error('User not found'); // Handle the case where user is not available
 };
 
+export const updateGroup = async (group: Group): Promise<Group> => {
+  const groupDocRef = groupCollection.doc(group.id);
+  await groupDocRef.update({
+    name: group.name,
+    description: group.description,
+  });
+
+  return group;
+};
+
+
 export const addMember = async (uid: string, idGroup: string, role: string): Promise<string | null> => {
   try {
     // Verify if the "Group" collection exists
