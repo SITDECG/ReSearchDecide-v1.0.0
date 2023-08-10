@@ -200,8 +200,7 @@ export const deleteGroupById = async (groupId: string): Promise<void> => {
   await groupCollection.doc(groupId).delete();
 }
 
-export const deleteMemberById = async(memberId: string, groupId: string): Promise<void> => {
-  const memberCollection = groupCollection.doc(groupId).collection("members");
+export const deleteMemberById = async(memberId: string): Promise<void> => {
   await memberCollection.doc(memberId).delete();
 }
 

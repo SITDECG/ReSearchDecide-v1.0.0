@@ -11,6 +11,7 @@ import { ValuationScreen } from '../features/valuation/screens/ValuationScreen';
 import { GroupScreen } from '../features/group/screens/GroupScreen';
 import { AdvancedSearchScreen } from '../features/discussion/screens/AdvancedSearchScreen';
 import { DecisionScreen} from '../features/decision/screens/DecisionScreen';
+import { EditGroupScreen, EditGroupScreenProps } from '../features/edit-group/screens/EditGroupScreen';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -45,6 +46,8 @@ const HomeStack = ({ navigation }: any) => (
           } }
       />
       <Stack.Screen name={ 'CreateGroupScreen' } options={ { title: 'Create Group' } } component={ CreateGroupScreen }/>
+      <Stack.Screen name={ 'EditGroupScreen' } options={ { title: 'Edit Group' } }
+                    component={  (props: EditGroupScreenProps) => <EditGroupScreen {...props}/> }/>
       <Stack.Screen name={ 'GroupScreen' } options={ { title: 'Discussion' } } component={ GroupScreen}/>
       <Stack.Screen name={ 'ValuationScreen' } options={ { title: 'Valuation' } } component={ ValuationScreen}/>
       <Stack.Screen name={ 'AdvancedSearchScreen' } options={ { title: 'Advanced Search' } } component={ AdvancedSearchScreen} />
