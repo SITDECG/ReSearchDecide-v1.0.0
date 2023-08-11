@@ -15,11 +15,13 @@ export const GroupListComponent = ({ groups }: GroupListProps) => {
 
   console.log('selectedItem', selectedItem);
 
+  
   const navigation = useNavigation();
 
   const handlePress = (group: Group) => {
     setSelectedItem(group);
     navigation.navigate('EditGroupScreen' as keyof typeof EditGroupScreen, { group } as never);
+    console.log('group', group);
   }
 
 

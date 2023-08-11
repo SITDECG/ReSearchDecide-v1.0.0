@@ -8,6 +8,7 @@ export const useMembersList = (groupId: string): [Member[], () => void] => {
   const fetchGroupMembers = async () => {
     try {
       const members = await getGroupMembers(groupId);
+      console.log(members)
       setMembers(members);
     } catch (error) {
       console.error('Error fetching group members:', error);

@@ -42,8 +42,9 @@ const MembersListComponent = ({ group }: MembersListComponentProps) => {
 
   const handleDeleteClick = async (member: Member) => {
     try {
+      console.log('member', member);
+      console.log('member.id', member?.id);
       await handleDeleteMember(String(member?.id));
-      console.log("Member deleted successfully", member?.id)
     } catch (error) {
       console.log("Error deleting member:", error);
     }

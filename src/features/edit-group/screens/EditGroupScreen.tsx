@@ -13,6 +13,7 @@ export type EditGroupScreenProps = {
   route: {params: {group: Group}};
 };
 
+
 export const EditGroupScreen = ({ route }: EditGroupScreenProps) => {
 
   const { group } = route.params;

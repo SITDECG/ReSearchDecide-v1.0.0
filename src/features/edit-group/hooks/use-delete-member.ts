@@ -20,7 +20,7 @@ export const useDeleteMember = (): [handleDeleteMember: (memberId: string) => Pr
     try {
       await deleteMemberById(memberId);
       setState({ isLoading: false, error: null, isDeleted: true });
-      console.log("Member deleted");
+      console.log("Member deleted", memberId);
     } catch (error: Error | any) {
       setState({ isLoading: false, error: error?.message, isDeleted: false });
     }
@@ -28,3 +28,4 @@ export const useDeleteMember = (): [handleDeleteMember: (memberId: string) => Pr
 
   return [handleDeleteMember, { ...state }];
 };
+

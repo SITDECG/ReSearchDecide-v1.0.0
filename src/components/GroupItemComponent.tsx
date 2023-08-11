@@ -45,7 +45,7 @@ export const GroupItemComponent = ({ group, onPress, isSelected }: GroupItemProp
             <Text style={[tw`font-bold`]}>{group.name.toUpperCase() || ' Group name'}</Text>
             <Text style={[tw`text-gray-500`]}>{group.description || 'Group description'}</Text>
           </View>
-          <TouchableHighlight style={styles.button} onPress={onPress} underlayColor="#125C7F">
+          <TouchableHighlight style={[tw`rounded`, styles.button]} onPress={onPress} underlayColor="#125C7F">
             <Text style={[tw`text-white`]}>Edit</Text>
           </TouchableHighlight>
         </View>
