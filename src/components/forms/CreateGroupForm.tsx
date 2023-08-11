@@ -25,7 +25,7 @@ const buildValidationSchema = () => {
   });
 };
 
-export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, groupId }: any) => {
+export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, group }: any) => {
 
 
   const initialValues = {
@@ -51,8 +51,7 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, groupId }: an
 
   const [modalVisible, setModalVisible] = useState(false);
   const users = useUsers();
-  const members = useMembersList(groupId);
-  const isGroupCreated = groupId !== '';
+  const isGroupCreated = group !== undefined;
 
   const [isMembersAdded, setMembersAdded] = useState(false);
 
@@ -120,7 +119,7 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, groupId }: an
               <ScrollView style={ tw`w-full` }>
                 <View style={ tw`w-full` }>
                   <Text style={ tw`text-xl font-bold my-4 text-center` }>User list</Text>
-                  { isGroupCreated && (<MembersListComponent groupId={ groupId }/>) }
+                  { isGroupCreated && (<MembersListComponent group={ group }/>) }
                 </View>
               </ScrollView>
 
@@ -153,7 +152,7 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, groupId }: an
               <ScrollView style={ tw`w-full` }>
                 <View style={ tw`w-full` }>
                   <Text style={ tw`text-xl font-bold my-4 text-center` }>User list</Text>
-                  <UserListComponent users={ users } groupId={ groupId } onMembersAdded={ handleMembersAdded }/>
+                  <UserListComponent users={ users } groupId={ group?.id } onMembersAdded={ handleMembersAdded }/>
                 </View>
               </ScrollView>
             </View>
