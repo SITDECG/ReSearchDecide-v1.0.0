@@ -8,8 +8,14 @@ import { useTopics } from '../hooks/use-topic'
 import { getUser} from '../../../api/user'
 import { useMemberVote } from '../hooks/use-member-vote'
 import { useGetGroup } from '../../../hooks/use-get-group'
+import { Group } from '../../../model/Group'
 
-export const GroupScreen = () => {
+export type EditGroupScreenProps = {
+  route: {params: {group: Group}};
+};
+export const GroupScreen = ({ route }: EditGroupScreenProps) => {
+  const { group } = route.params;
+  console.log('group1', group);
   const navigation = useNavigation();
   const user = getUser(); 
   const { vote } = useMemberVote(user?.uid || '');
@@ -19,7 +25,7 @@ export const GroupScreen = () => {
     navigation.navigate('DecisionScreen' as never);
   }
 
-  const { group } = useGetGroup(vote?.groupId|| '');
+  // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopics();
   const handlePress = () => {
     navigation.navigate('AdvancedSearchScreen' as never);

@@ -17,7 +17,7 @@ export type EditGroupScreenProps = {
 export const EditGroupScreen = ({ route }: EditGroupScreenProps) => {
 
   const { group } = route.params;
-  
+  console.log('groupEdit', group);
   const [isGroupCreated, setGroupCreated] = useState(false);
   const [createdGroupId, setCreatedGroupId] = useState<string>(''); // Cambiar a string en lugar de null
   const [handleCreateGroup, createGroupState] = useCreateGroup();

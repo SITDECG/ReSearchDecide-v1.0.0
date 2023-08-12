@@ -17,8 +17,9 @@ export const GroupItemComponent = ({ group, onPress, isSelected }: GroupItemProp
 
   const navigation = useNavigation();
 
-  const handlePress = () => {
-    navigation.navigate('GroupScreen' as keyof typeof GroupScreen);
+  const handlePress = (group:Group) => {
+    navigation.navigate('GroupScreen' as keyof typeof GroupScreen, { group } as never);
+    console.log('group', group);  
   }
 
   const handlePressIn = () => {
@@ -34,7 +35,7 @@ export const GroupItemComponent = ({ group, onPress, isSelected }: GroupItemProp
   return (
     <View style={tw`my-1`}>
       <TouchableHighlight
-        onPress={handlePress}
+        onPress={() => handlePress(group)}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         underlayColor="rgba(0, 0, 0, 0)"

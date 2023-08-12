@@ -1,14 +1,14 @@
-import { getUser, saveNewUserDB, getDBUserByEmail, getDBUserByUid, getDBUserByDisplayName, getDBUserList, signUp, logIn, sendVerification, signOut, reload, reauthenticate, updatePassword, sendPasswordReset } from '../../api/user';
+import { getUser, saveNewUserDB, getDBUserByEmail, getDBUserByUid, getDBUserByDisplayName, getDBUserList, signUp, logIn, sendVerification, signOut, reload, reauthenticate, updatePassword, sendPasswordReset, getCurrentUser } from '../../api/user';
 const { Given, When, Then } = require('cucumber');
 import { defineFeature, loadFeature } from 'jest-cucumber';
 const feature = loadFeature('../../../../../SITDECG/ReSearchDecide/src/Tests/__features__/users.feature');
 import { SignUpFormValues } from '../../components/forms/SignUpForm';
-
+import firebase from 'firebase/compat/app';
 const { expect } = require('chai');
 
 
 defineFeature(feature, (test) => {
-
+    let userCredentials: firebase.auth.UserCredential;
 
     beforeEach(() => {
 
@@ -46,7 +46,6 @@ defineFeature(feature, (test) => {
 
     test('User sends verification email', ({ given, when, then }) => {
         let verificationEmailSent = false; // Variable para controlar si se envió el correo
-
         given('the user is authenticated', () => {
 
         });
@@ -143,93 +142,124 @@ defineFeature(feature, (test) => {
 
 
     test('User log in', ({ given, when, then }) => {
-        given('the user provides the following credentials:', (table) => {
-
+        given('the user provides the following credentials:', async (table) => {
+            const { email, password } = table[0];
+            // Set up user credentials
+            userCredentials = await logIn({ email, password });
         });
 
         when('the user logs in', () => {
-
+            // User credentials are set up in the 'given' step
         });
 
         then('the user should be logged in successfully', () => {
-
+            expect(userCredentials).to.exist;
+            expect(userCredentials.user).to.exist;
+            // Add more assertions as needed
         });
     });
 
-
-
-
     test('User signs out', ({ given, when, then }) => {
         given('the user is authenticated', () => {
-
+            // You might need to log in the user here
         });
 
-        when('the user signs out', () => {
-
+        when('the user signs out', async () => {
+            try {
+                await signOut();
+            } catch (error) {
+                // Handle errors if needed
+            }
         });
 
-        then('the user should be logged out successfully', () => {
-
+        then('the user should be logged out successfully', async () => {
+            const currentUser = getCurrentUser();
+            expect(currentUser).to.be.null;
         });
     });
 
 
     test('User reloads their information', ({ given, when, then }) => {
         given('the user is authenticated', () => {
-
+            // You might need to log in the user here
         });
 
-        when('the user reloads their information', () => {
-
+        when('the user reloads their information', async () => {
+            try {
+                await reload();
+            } catch (error) {
+                // Handle errors if needed
+            }
         });
 
-        then('the user information should be reloaded', () => {
-
+        then('the user information should be reloaded', async () => {
+            // You can check if the user's information has been updated
+            const user = getCurrentUser();
+            expect(user).to.exist;
+            // Add more assertions as needed
         });
     });
-
 
     test('User reauthentication', ({ given, when, then }) => {
         given('the user is authenticated', () => {
-
+            // You might need to log in the user here
         });
 
-        when(/^the user reauthenticates with email "(.*)" and password "(.*)"$/, (arg0, arg1) => {
-
+        when(/^the user reauthenticates with email "(.*)" and password "(.*)"$/, async (email, password) => {
+            try {
+                await reauthenticate({ email, password });
+            } catch (error) {
+                // Handle errors if needed
+            }
         });
 
         then('the user should be reauthenticated successfully', () => {
-
+            // Add assertions to confirm successful reauthentication
+            const user = getCurrentUser();
+            expect(user).to.exist;
+            // Add more assertions as needed
         });
     });
-
 
     test('User updates password', ({ given, when, then }) => {
         given('the user is authenticated', () => {
-
+            // You might need to log in the user here
         });
 
-        when(/^the user updates their password to "(.*)"$/, (arg0) => {
-
+        when(/^the user updates their password to "(.*)"$/, async (newPassword) => {
+            try {
+                await updatePassword({ password: newPassword });
+            } catch (error) {
+                // Handle errors if needed
+            }
         });
 
-        then('the password should be updated successfully', () => {
-
+        then('the password should be updated successfully', async () => {
+            // Add assertions to confirm successful password update
+            const user = getCurrentUser();
+            expect(user).to.exist;
+            // Add more assertions as needed
         });
     });
 
-
     test('User sends password reset email', ({ given, when, then }) => {
-        given(/^the user provides their email "(.*)"$/, (arg0) => {
+        let passwordResetEmailSent = false;
 
+        given(/^the user provides their email "(.*)"$/, (email) => {
+            // Set up the email for password reset
         });
 
-        when('the user sends a password reset email', () => {
-
+        when('the user sends a password reset email', async () => {
+            try {
+                await sendPasswordReset({ email: 'user@example.com' });
+                passwordResetEmailSent = true;
+            } catch (error) {
+                // Handle errors if needed
+            }
         });
 
         then('a password reset email should be sent', () => {
-
+            expect(passwordResetEmailSent).to.be.true;
         });
     });
 
