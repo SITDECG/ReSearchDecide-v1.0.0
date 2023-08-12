@@ -3,7 +3,8 @@
   "jest": {
     "testMatch": [
       "**/*.steps.ts"
-    ]
+    ],
+    "setupFiles": ["./src/api/index.ts"]
   },
   "version": "1.0.0",
   "main": "src/Root.tsx",

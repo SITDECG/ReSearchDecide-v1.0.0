@@ -34,7 +34,7 @@ export const EditGroupForm = ({ onSubmit, buttonText, isLoading, group }: {
   isLoading: boolean,
   group: Group
 }) => {
-  console.log('group', group);
+  console.log('group1', group);
   const navigation = useNavigation();
 
   const initialValues = {

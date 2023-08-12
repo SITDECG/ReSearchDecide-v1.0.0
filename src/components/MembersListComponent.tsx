@@ -17,7 +17,7 @@ type MembersListComponentProps = {
 const MembersListComponent = ({ group }: MembersListComponentProps) => {
 
   const [members, refreshMembers] = useMembersList(group?.id);
-
+  console.log('groupId', group?.id)
   const [searchValue, setSearchValue] = useState('');
   const handleSearch = (value: string) => {
     setSearchValue(value);
