@@ -7,12 +7,17 @@ import { useNavigation } from '@react-navigation/native'
 import { getUser} from '../../../api/user'
 import { useMemberVote } from '../../group/hooks/use-member-vote'
 import { useGetGroup } from '../../../hooks/use-get-group';
+import { Group } from '../../../model/Group'
 
-export const DecisionScreen = () => {
+export type EditGroupScreenProps = {
+  route: {params: {group: Group}};
+};
+export const DecisionScreen = ({ route }: EditGroupScreenProps) => {
+  const { group } = route.params;
   const navigation = useNavigation();
   const user = getUser(); 
   const { vote } = useMemberVote(user?.uid || '');
-  const { group } = useGetGroup(vote?.groupId|| '');
+  // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopicsScore(); 
   
   const windowWidth = Dimensions.get('window').width;
@@ -27,7 +32,7 @@ export const DecisionScreen = () => {
     <Center flex={1}>
       <VStack space={1} alignItems="center" w={contentWidth}>
         <View>
-          <GroupName title={group?.name} id={2}/>
+          <GroupName group={group} id={2}/>
         </View>
         <View style={styles.container}>
             <View style={styles.containerSectionA}>

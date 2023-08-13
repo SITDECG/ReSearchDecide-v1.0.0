@@ -11,6 +11,8 @@ import { useUpdateMemberVote } from '../hooks/use-update-member-vote';
 import { getUser} from '../../../api/user';
 import { useMemberVote } from '../../group/hooks/use-member-vote';
 import { useGetGroup } from '../../../hooks/use-get-group'
+import { Group } from '../../../model/Group';
+import { DecisionScreen } from '../../decision/screens/DecisionScreen';
 
 const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: any, message: any, onConfirm: any, onCancel: any}) => {
   return (
@@ -39,11 +41,15 @@ const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: a
   );
 };
 
-export const ValuationScreen = () => {
+export type EditGroupScreenProps = {
+  route: {params: {group: Group}};
+};
+export const ValuationScreen = ({ route }: EditGroupScreenProps) => {
+  const { group } = route.params;
   const navigation = useNavigation();
   const user = getUser(); 
   const { vote } = useMemberVote(user?.uid || '');
-  const { group } = useGetGroup(vote?.groupId|| '');
+  // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopicsScore(); 
   const { updateTopicScore } = useTopicScoreUpdater(); 
   const { updateVote } = useUpdateMemberVote();
@@ -88,7 +94,7 @@ export const ValuationScreen = () => {
     if (user) {
       updateVote(user.uid, true);
     }
-    navigation.navigate('DecisionScreen' as never);
+    navigation.navigate('DecisionScreen' as keyof typeof DecisionScreen, { group } as never);
   };
 
   async function onReordered(fromIndex: number, toIndex: number) {
@@ -108,10 +114,10 @@ export const ValuationScreen = () => {
     <Center flex={1}>
     <VStack space={1} >
       <View>
-        <GroupName title={group?.name} id={1}/>
+        <GroupName group={group} id={1}/>
       </View>
       <View >
-        <Text style={styles.text}>Order the topics according to your appreciation and rate each one.</Text>
+        <Text style={styles.text}>Drag and sort the topics and rate each one.</Text>
       </View>
       <View >
         <DragList

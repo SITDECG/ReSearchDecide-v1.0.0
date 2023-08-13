@@ -1,29 +1,34 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
+import { Group } from '../model/Group';
+import { GroupScreen } from '../features/group/screens/GroupScreen';
+import { ValuationScreen } from '../features/valuation/screens/ValuationScreen';
+import { DecisionScreen } from '../features/decision/screens/DecisionScreen';
 
 interface GroupNameProps {
-  title?: string;
+  group: Group;
   id: number;
 }
-export const GroupName: React.FC<GroupNameProps> = ({ title, id }) => {
+export const GroupName: React.FC<GroupNameProps> = ({ group, id }) => {
   const navigation = useNavigation();
 
   const handlePressDiscussion = () => {
-    navigation.navigate('GroupScreen' as never);
+    navigation.navigate('GroupScreen' as keyof typeof GroupScreen, { group } as never);
   }
 
   const handlePressValuation = () => {
-    navigation.navigate('ValuationScreen' as never);
+    navigation.navigate('ValuationScreen' as keyof typeof ValuationScreen, { group } as never);
   }
 
   const handlePressDecision = () => {
-    navigation.navigate('DecisionScreen' as never);
+    navigation.navigate('DecisionScreen' as keyof typeof DecisionScreen, { group } as never);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{group.name}</Text>
+      <Text style={styles.subTitle}>{group.description}</Text>
       <View style={styles.subContainer}>
         <TouchableOpacity
           style={[styles.buttonGo, id === 0 ? styles.buttonUp : null]}
@@ -62,6 +67,12 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 40,
     fontWeight: '700',
+    wordWrap: 'break-word',
+  },
+  subTitle: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: '500',
     wordWrap: 'break-word',
   },
   subContainer: {

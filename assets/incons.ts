@@ -20,6 +20,8 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faGripVertical } from '@fortawesome/free-solid-svg-icons';
 
 
 library.add(faMailBulk, faLock, faEnvelope);
@@ -45,7 +47,8 @@ export default {
   search: faSearch,
   close: faClose,
   trash: faTrash,
-  refresh: faRefresh
-
+  refresh: faRefresh,
+  bars: faBars,
+  gripVertical: faGripVertical
 
 }

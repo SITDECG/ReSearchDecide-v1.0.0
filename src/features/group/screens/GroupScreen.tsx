@@ -9,6 +9,8 @@ import { getUser} from '../../../api/user'
 import { useMemberVote } from '../hooks/use-member-vote'
 import { useGetGroup } from '../../../hooks/use-get-group'
 import { Group } from '../../../model/Group'
+import { AdvancedSearchScreen } from '../../discussion/screens/AdvancedSearchScreen'
+import { DecisionScreen } from '../../decision/screens/DecisionScreen'
 
 export type EditGroupScreenProps = {
   route: {params: {group: Group}};
@@ -22,13 +24,13 @@ export const GroupScreen = ({ route }: EditGroupScreenProps) => {
 
   console.log(vote);
   if (vote?.vote) {
-    navigation.navigate('DecisionScreen' as never);
+    navigation.navigate('DecisionScreen' as keyof typeof DecisionScreen, { group } as never);
   }
 
   // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopics();
   const handlePress = () => {
-    navigation.navigate('AdvancedSearchScreen' as never);
+    navigation.navigate('AdvancedSearchScreen' as keyof typeof AdvancedSearchScreen, { group } as never);
   };
   
   const windowWidth = Dimensions.get('window').width;
@@ -39,7 +41,7 @@ export const GroupScreen = ({ route }: EditGroupScreenProps) => {
     <Center flex={1}>
       <VStack space={0.5} alignItems="center" w={contentWidth}>
         <View>
-          <GroupName title={group?.name} id={0}/>
+          <GroupName group={group} id={0}/>
         </View>
         <View >
           <Text style={styles.text}>For more information, click on a topic</Text>

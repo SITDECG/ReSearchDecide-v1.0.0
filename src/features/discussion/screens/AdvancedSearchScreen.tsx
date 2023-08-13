@@ -6,12 +6,17 @@ import { useTopics } from '../../group/hooks/use-topic'
 import { getUser} from '../../../api/user'
 import { useMemberVote } from '../../group/hooks/use-member-vote'
 import { useGetGroup } from '../../../hooks/use-get-group'
+import { Group } from '../../../model/Group'
 
-export const AdvancedSearchScreen = () => {
+export type EditGroupScreenProps = {
+  route: {params: {group: Group}};
+};
+export const AdvancedSearchScreen = ({ route }: EditGroupScreenProps) => {
+  const { group } = route.params;
   const { topics } = useTopics(); 
   const user = getUser(); 
   const { vote } = useMemberVote(user?.uid || '');
-  const { group } = useGetGroup(vote?.groupId|| '');
+  // const { group } = useGetGroup(vote?.groupId|| '');
 
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
@@ -55,7 +60,7 @@ export const AdvancedSearchScreen = () => {
     <Center flex={1}>
       <VStack space={0.5} alignItems="center" w={contentWidth}>
       <View>
-        <GroupName title={group?.name} id={0}/>
+        <GroupName group={group} id={0}/>
       </View>
       <View >
         <Text style={styles.text}>Select more than one topic for more information.</Text>
