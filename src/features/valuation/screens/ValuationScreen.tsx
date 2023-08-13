@@ -1,6 +1,6 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { VStack, Center } from 'native-base';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, Animated } from 'react-native';
 import { GroupName } from '../../../components/GroupName';
 import { ElementValuation } from '../../../components/ElementValuation';
 import { useNavigation } from '@react-navigation/native';
@@ -11,7 +11,10 @@ import { useUpdateMemberVote } from '../hooks/use-update-member-vote';
 import { getUser} from '../../../api/user';
 import { useMemberVote } from '../../group/hooks/use-member-vote';
 import { useGetGroup } from '../../../hooks/use-get-group'
-
+import { getTopicsScoreRealTime } from '../../../api/notification';
+import { TopicScore } from '../../../model/TopicScore';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faArrowDown, faArrowUp, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: any, message: any, onConfirm: any, onCancel: any}) => {
   return (
     <Modal
@@ -103,13 +106,82 @@ export const ValuationScreen = () => {
   const windowWidth = Dimensions.get('window').width;
   const isWeb = windowWidth >= 768;
   const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
-  
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const fadeOut = () => {
+    // Will change fadeAnim value to 0 in 3 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 3000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const [topicsN, setTopicsN] = useState<TopicScore[]>([]);
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    const fetchData = async () => {
+      try {
+        fadeOut(); // Inicia el fadeOut antes de actualizar los datos
+
+        unsubscribe = getTopicsScoreRealTime((data) => {
+          // Actualiza los datos y luego inicia el fadeIn
+          setTopicsN(data);
+          fadeIn();
+        });
+
+      } catch (error) {
+        console.error('Error fetching topics:', error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
+
+
+
   return (
     <Center flex={1}>
     <VStack space={1} >
       <View>
         <GroupName title={group?.name} id={1}/>
       </View>
+      <View style={styles.container}>
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          flexDirection: 'row', // Agrega flexDirection: 'row' para mostrar elementos horizontalmente
+          alignItems: 'center',
+          flexWrap: 'wrap', // Agrega flexWrap para que los elementos se ajusten automáticamente
+        }}>
+        {topicsN.map((topic, index) => (
+          <View key={index} style={styles.topicItem}>
+            {index === 0 ? (
+              <FontAwesomeIcon icon={faCaretDown} size={20} color="red" />
+            ) : (
+              <FontAwesomeIcon icon={faCaretUp} size={20} color="green" />
+            )}
+            <Text style={styles.topicTitle}>{topic.topic}</Text>
+          </View>
+        ))}
+      </Animated.View>
+    </View>
       <View >
         <Text style={styles.text}>Order the topics according to your appreciation and rate each one.</Text>
       </View>
@@ -188,5 +260,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#146C94',
     padding: 10,
     borderRadius: 5,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topicItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginRight: 10, // Añade un margen derecho para separar los elementos
+  },
+  topicTitle: {
+    marginLeft: 10,
+    fontSize: 16,
+    maxWidth: '80%',
   },
 });
