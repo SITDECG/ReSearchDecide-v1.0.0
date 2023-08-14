@@ -12,9 +12,10 @@ import ErrorMessage from "../../../components/util/ErrorMessage";
 
 export const EditProfileScreen = () => {
   const user = getCurrentUser();
+
   const isWeb = Platform.OS === 'web';
   const textSize = isWeb ? 'text-5xl' : 'text-3xl';
-  const textSizeSub = isWeb ? 'text-4xl' : 'text-2xl';
+  const textSizeSub = isWeb ? 'text-4xl' : 'text-xl';
   const textCenter = isWeb ? '' : 'text-center';
 
   const [displayNameChanged, setDisplayNameChanged] = useState(false); // Estado para controlar el mensaje de cambio exitoso
@@ -45,8 +46,23 @@ export const EditProfileScreen = () => {
               </View>
             </View>
         ) : (
-            <View>
-              <AppBanner/>
+            <View style={ tw`w-full` }>
+              <Text style={ tw`${ textCenter } font-bold mb-3 ${ textSize }` }>
+                { user?.displayName }
+              </Text>
+              <Text
+                  style={ tw`${ textCenter } font-medium text-gray-500 mb-10 ${ textSizeSub }` }>
+                { user?.email }
+              </Text>
+              <View style={ tw`w-full` }>
+                { isLoading && <ActivityIndicatorComponent isLoading={ isLoading }/> }
+                { error && <ErrorMessage error={ error }/> }
+                { displayNameChanged && (
+                    <Text style={ tw`text-green-500 font-bold mb-2 text-center` }>User name updated
+                      successfully!</Text>
+                ) }
+                <EditProfileForm onSubmit={ handleEditProfileSubmit } isLoading={ false }/>
+              </View>
             </View>
         ) }
       </GuestLayout>

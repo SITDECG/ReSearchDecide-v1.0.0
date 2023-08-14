@@ -7,14 +7,16 @@ import { NativeBaseProvider } from 'native-base';
 import App from './App';
 import { UserContextProvider } from "./context/UserContext";
 import { SafeAreaView } from "react-native";
-
+import { GroupContextProvider } from "./context/GroupContext";
 const Root = () => (
     <SafeAreaView  style={{ flex: 1 }}>
       <NavigationContainer>
         <NativeBaseProvider>
           <UserContextProvider>
+          <GroupContextProvider>
             <App/>
             <StatusBar style="auto"/>
+            </GroupContextProvider>
           </UserContextProvider>
         </NativeBaseProvider>
       </NavigationContainer>

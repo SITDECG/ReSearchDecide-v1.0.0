@@ -109,10 +109,10 @@ export const EditGroupForm = ({ onSubmit, buttonText, isLoading, group }: {
             />
           </View>
           { formik.touched.group?.description && formik.errors.group?.description && (
-              <Text style={ tw`text-red-500` }>{ formik.errors.group.description }</Text>
+              <Text style={ tw`text-red-500` }>{ formik.errors.group.description } </Text>
           ) }
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
               style={ [tw`rounded mt-2 mb-1`, styles.button] }
               onPress={ () => formik.handleSubmit() }
           >
@@ -120,7 +120,7 @@ export const EditGroupForm = ({ onSubmit, buttonText, isLoading, group }: {
               <FontAwesomeIcon icon={ icons.edit } style={ tw`text-white` }/>
               <Text style={ tw`text-white` }>{ buttonText }</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
               style={ [tw`rounded`, styles.buttonDelete] }

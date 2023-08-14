@@ -10,8 +10,9 @@ import { CreateGroupScreen } from "../features/create-group/screens/CreateGroupS
 import { ValuationScreen } from '../features/valuation/screens/ValuationScreen';
 import { GroupScreen } from '../features/group/screens/GroupScreen';
 import { AdvancedSearchScreen } from '../features/discussion/screens/AdvancedSearchScreen';
-import { DecisionScreen} from '../features/decision/screens/DecisionScreen';
+import { DecisionScreen } from '../features/decision/screens/DecisionScreen';
 import { EditGroupScreen, EditGroupScreenProps } from '../features/edit-group/screens/EditGroupScreen';
+import { useGroupsContext } from "../context/GroupContext";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -47,12 +48,15 @@ const HomeStack = ({ navigation }: any) => (
       />
       <Stack.Screen name={ 'CreateGroupScreen' } options={ { title: 'Create Group' } } component={ CreateGroupScreen }/>
       <Stack.Screen name={ 'EditGroupScreen' } options={ { title: 'Edit Group' } }
-                    component={  (props: EditGroupScreenProps) => <EditGroupScreen {...props}/> }/>
-      <Stack.Screen name={ 'GroupScreen' } options={ { title: 'Discussion' } } component={ GroupScreen}/>
-      <Stack.Screen name={ 'ValuationScreen' } options={ { title: 'Valuation' } } component={ ValuationScreen}/>
-      <Stack.Screen name={ 'AdvancedSearchScreen' } options={ { title: 'Advanced Search' } } component={ AdvancedSearchScreen} />
-      <Stack.Screen name={ 'DecisionScreen' } options={ { title: 'Decision' } } component={ DecisionScreen} />
-     
+                    component={ () => <EditGroupScreen
+                        route={ { params: { group: { name: '', id: '', description: '' } } } }/> }
+      />
+      <Stack.Screen name={ 'GroupScreen' } options={ { title: 'Discussion' } } component={ GroupScreen }/>
+      <Stack.Screen name={ 'ValuationScreen' } options={ { title: 'Valuation' } } component={ ValuationScreen }/>
+      <Stack.Screen name={ 'AdvancedSearchScreen' } options={ { title: 'Advanced Search' } }
+                    component={ AdvancedSearchScreen }/>
+      <Stack.Screen name={ 'DecisionScreen' } options={ { title: 'Decision' } } component={ DecisionScreen }/>
+
     </Stack.Navigator>
 );
 

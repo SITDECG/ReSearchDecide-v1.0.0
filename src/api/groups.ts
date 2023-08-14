@@ -1,6 +1,6 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-import { getCurrentUser, getDBUserByUid } from './user';
+import { getCurrentUser, getDBUserByUid, getCurrentUserForGroupList } from './user';
 import { Group } from "../model/Group";
 import { Member } from "../model/Member";
 
@@ -83,7 +83,47 @@ export const addMember = async (uid: string, idGroup: string, role: string): Pro
 };
 
 export const getGroupsByUser = async (): Promise<Group[]> => {
-  const user = getCurrentUser();
+  const user = await getCurrentUserForGroupList();
+  console.log('user: ', user);
+
+  if (user) {
+    console.log('user: ', user);
+    const { uid } = user;
+    const memberQuerySnapshot = await memberCollection.where('uid', '==', uid).get();
+    const groupIds: string[] = [];
+
+    memberQuerySnapshot.forEach((memberDoc) => {
+      const groupId = memberDoc.data().id;
+      groupIds.push(groupId);
+    });
+
+    const groupPromises: Promise<Group | null>[] = groupIds.map(async (groupId) => {
+      const groupDoc = await groupCollection.doc(groupId).get();
+      if (groupDoc.exists) {
+        const groupData = groupDoc.data() as Group;
+        const group: Group = {
+          id: groupId,
+          name: groupData.name,
+          description: groupData.description,
+        };
+        console.log('group: ', group);
+        return group;
+      }
+      return null;
+    });
+
+    const groups = await Promise.all(groupPromises);
+    console.log('groups aquie en la api: ', groups);
+    return groups.filter((group) => group !== null) as Group[];
+  }
+
+  console.log('No user found');
+
+  return [];
+};
+
+export const getGroupsByUserFirst = async (): Promise<Group[]> => {
+  const user = await getCurrentUser();
 
   if (user) {
     const { uid } = user;
@@ -104,14 +144,17 @@ export const getGroupsByUser = async (): Promise<Group[]> => {
           name: groupData.name,
           description: groupData.description,
         };
+        console.log('group: ', group);
         return group;
       }
       return null;
     });
 
     const groups = await Promise.all(groupPromises);
+    console.log('groups aquie en la api: ', groups);
     return groups.filter((group) => group !== null) as Group[];
   }
+
 
   return [];
 };

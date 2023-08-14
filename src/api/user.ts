@@ -2,15 +2,38 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { User } from '../model/User';
-import firestore = firebase.firestore;
 import { Member } from '../model/Member';
+import { useGroupsContext } from "../context/GroupContext";
 
 export const getUser = (): firebase.User | null => firebase.auth().currentUser;
 
+export const deleteUser = async (): Promise<void> => {
+  const user = getUser();
+  if (user) {
+    await user.delete();
+  }
+};
+
+export const deleteUserByEmail = async (email: string): Promise<void> => {
+  const user = await firebase.auth().fetchSignInMethodsForEmail(email);
+  if (user) {
+    await firebase.auth().currentUser?.delete();
+  }
+};
+
+export const getCurrentUserForGroupList = async (): Promise<firebase.User | null> => {
+  return new Promise((resolve) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      unsubscribe();
+      resolve(user);
+    });
+  });
+};
+
+
 
 export const getCurrentUser = (): firebase.User | null => {
-  const currentUser = firebase.auth().currentUser;
-  return currentUser;
+  return firebase.auth().currentUser;
 };
 
 export const deleteDBUser = async (email: string): Promise<void> => {
@@ -100,6 +123,14 @@ export const signUp = async ({ email = '', password = '', userName = '' }: {
   await sendVerification();
 };
 
+export const   sendVerification = (): Promise<void> => {
+  const user = getUser();
+  if (user) {
+    return user.sendEmailVerification();
+  }
+  return Promise.reject('No user found');
+};
+
 export const logIn = ({ email = '', password = '' }: {
   email: string;
   password: string;
@@ -113,14 +144,6 @@ export const logIn = ({ email = '', password = '' }: {
         console.log('Error al iniciar sesión:', error);
         throw error;
       });
-};
-
-export const sendVerification = (): Promise<void> => {
-  const user = getUser();
-  if (user) {
-    return user.sendEmailVerification();
-  }
-  return Promise.reject('No user found');
 };
 
 export const signOut = (): Promise<void> => firebase.auth().signOut()

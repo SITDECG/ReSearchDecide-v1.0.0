@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { getGroupsByUser } from '../api/groups';
+import { useEffect, useState } from "react";
 import { Group } from "../model/Group";
+import { getGroupsByUser, getGroupsByUserFirst } from "../api/groups";
 
-const useGroupsList = () => {
+const useGroupsListFirstTime = () => {
+
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const groupsData = await getGroupsByUser();
-        console.log('GURPOSSS; ',groupsData);
+        const groupsData = await getGroupsByUserFirst();
         setGroups(groupsData);
       } catch (error) {
         console.log(error);
@@ -26,4 +26,4 @@ const useGroupsList = () => {
   return { groups, loading };
 };
 
-export default useGroupsList;
+export default useGroupsListFirstTime;

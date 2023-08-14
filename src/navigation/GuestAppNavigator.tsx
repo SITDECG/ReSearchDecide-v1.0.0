@@ -18,6 +18,7 @@ export const GuestAppNavigator = () => (
             shadowOpacity: 0.1,
             shadowRadius: 10,
             shadowOffset: { width: 0, height: 2 },
+            
           },
           cardStyle: { backgroundColor: '#fff' },
         } }
@@ -63,7 +64,7 @@ const headerTitleStyle = StyleSheet.create({
   headerTitle: {
     color: '#000',
     fontSize: 20,
-    fontWeight: '300',
+    fontWeight: 'bold',
     paddingVertical: 10,
   },
 });

@@ -1,103 +1,232 @@
-// import { defineFeature, loadFeature } from 'jest-cucumber';
-// import firebase from 'firebase/compat/app';
-// import 'firebase/firestore';
-
-// import {
-//   FIREBASE_API_KEY,
-//   FIREBASE_AUTH_DOMAIN,
-//   FIREBASE_PROJECT_ID,
-//   FIREBASE_STORAGE_BUCKET,
-//   FIREBASE_MESSAGING_SENDER_ID,
-//   FIREBASE_APP_ID,
-// } from '@env'
-// import {
-//   saveGroup,
-//   deleteGroupById,
-// } from '../../api/groups'; // Reemplaza 'your-file' con el nombre de tu archivo
-// import {
-//   signUp,
-//   logIn,
-//   signOut,
-//   getDBUserList,
-// } from '../../api/user';
-// const feature = loadFeature('./groups.feature');
-
-// defineFeature(feature, (test) => {
-//   beforeEach(async () => {
-//     // Configura cualquier configuración inicial necesaria, como iniciar sesión con un usuario de prueba
+import { defineFeature, loadFeature } from 'jest-cucumber';
+import { expect } from 'chai';
+import {
+    saveGroup,
+    addMember,
+    getGroupsByUser,
+    getGroupMembers,
+    updateMemberRole,
+    deleteGroupById,
+    getGroupByIdd,
+    updateGroup,
+} from '../../api/groups'; // Reemplaza con las rutas reales
+import { Group } from '../../model/Group';
+const feature = loadFeature('../../../../../SITDECG/ReSearchDecide-v1.0.0/src/Tests/__features__/groups.feature');
 
 
-//     console.log('FIREBASE_API_KEY', FIREBASE_API_KEY)
-//     console.log('FIREBASE_AUTH_DOMAIN', FIREBASE_AUTH_DOMAIN)
-//     console.log('FIREBASE_PROJECT_ID', FIREBASE_PROJECT_ID)
-//     console.log('FIREBASE_STORAGE_BUCKET', FIREBASE_STORAGE_BUCKET)
-//     console.log('FIREBASE_MESSAGING_SENDER_ID', FIREBASE_MESSAGING_SENDER_ID)
-//     console.log('FIREBASE_APP_ID', FIREBASE_APP_ID)
+defineFeature(feature, (test) => {
+    let userLoggedIn: boolean;
+    let groupData: Group;
+    let memberData: any;
+    let groupsList: any[];
+    let groupMembers: any[];
 
-//     const firebaseConfig = {
-//       apiKey: FIREBASE_API_KEY,
-//       authDomain: FIREBASE_AUTH_DOMAIN,
-//       projectId: FIREBASE_PROJECT_ID,
-//       storageBucket: FIREBASE_STORAGE_BUCKET,
-//       messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
-//       appId: FIREBASE_APP_ID,
-//     }
+    // Escenario 1: Saving a new group
+    test('Saving a new group', ({ given, when, then }) => {
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
 
-//     firebase.initializeApp(firebaseConfig)
-//     const email = 'danielo14ch@hotmail.com';
-//     const password = '12345678';
+        when(/^the user saves a new group with name "(.*)" and description "(.*)"$/, async (name, description) => {
+            // return groupData = await saveGroup({
+            //     name, description
+            // });
+        });
 
-//     await signUp({ email, password, userName: 'Test User' });
-//     await logIn({ email, password });
+        then('the group should be successfully saved with the provided details', () => {
+            // expect(groupData).to.exist;
+            // expect(groupData.name).to.equal('Test Group');
+            // expect(groupData.description).to.equal('This is a test group');
+        });
 
-//   });
+        then('the user should be added as an admin member to the group', async () => {
+            // const members = await getGroupMembers(groupData.id);
+            // const adminMember = members.find((member: any) => member.role === 'admin');
+            // expect(adminMember).to.exist;
+        });
+    });
 
-//   afterEach(async () => {
-//     // Realiza cualquier limpieza necesaria, como cerrar sesión después de cada prueba
-//     await deleteGroupById('Test Group');
-//     await signOut();
-//   });
+    // Escenario 2: Adding a member to a group
+    test('Adding a member to a group', ({ given, when, then }) => {
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
+        given(/^a group exists with name "(.*)" and description "(.*)"$/, async (name, description) => {
+            // groupData = await saveGroup({ name, description });
+        });
+        when(
+            'the user adds a new member with email "newmember@example.com" and role "member" to the group',
+            async () => {
+                // memberData = await addMember('newmember@example.com', groupData.id, 'member');
+            }
+        );
+        then('the member should be successfully added to the group', () => {
+            // expect(memberData).to.exist;
+            // expect(memberData.email).to.equal('newmember@example.com');
+        });
+        then('the member\'s details should match the provided information', async () => {
+            // const members = await getGroupMembers(groupData.id);
+            // const addedMember = members.find((member: any) => member.email === 'newmember@example.com');
+            // expect(addedMember).to.exist;
+            // expect(addedMember?.role).to.equal('member');
+        });
+    });
 
-//   test('Create a new group', ({ given, when, then }) => {
-//     given('I am logged in', async () => {
-//       // Realiza la acción para iniciar sesión con un usuario de prueba
-//       await signUp({ email: 'test@example.com', password: 'password', userName: 'Test User' });
-//     });
+    // Escenario 3: Getting groups for a user
+    test('Getting groups for a user', ({ given, when, then }) => {
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
 
-//     when('I create a new group with name {string} and description {string}', async (groupName, groupDescription) => {
-//       // Realiza la acción para crear un nuevo grupo con los parámetros proporcionados
-//       await saveGroup({ name: groupName, description: groupDescription });
-//     });
+        given('the user is a member of groups "Group A", "Group B", and "Group C"', () => {
+            // Implementación de tu lógica para establecer la membresía del usuario
+        });
 
-//     then('the group should be created successfully', async () => {
-//       // Verifica que el grupo se haya creado correctamente
-//       const userGroups = await getDBUserList(); // Obtiene la lista de grupos del usuario
-//       // Realiza las aserciones necesarias para verificar que el grupo se haya creado correctamente
-//       expect(userGroups.length).toBeGreaterThan(0);
-//     });
-//   });
+        when('the user fetches their groups', async () => {
+            // groupsList = await getGroupsByUser();
+        });
 
-//   test('Delete a group', ({ given, and, when, then }) => {
-//     given('I am logged in', async () => {
-//       // Realiza la acción para iniciar sesión con un usuario de prueba
-//       await signUp({ email: 'test@example.com', password: 'password', userName: 'Test User' });
-//     });
+        then('the user should receive a list of groups they are a member of', () => {
+            // expect(groupsList).to.be.an('array');
+            // expect(groupsList).to.have.length.above(0);
+        });
 
-//     and('I have a group with name {string}', async (groupName) => {
-//       // Realiza la acción para crear un grupo de prueba con el nombre proporcionado
-//       await saveGroup({ name: groupName, description: 'Test Group Description' });
-//     });
+        then('the group details should match the information in the database', () => {
+            // Implementación para verificar si los detalles de los grupos coinciden con la información en la base de datos
+        });
+    });
 
-//     when('I delete the group with name {string}', async (groupName) => {
-//       // Realiza la acción para eliminar el grupo con el nombre proporcionado
-//       await deleteGroupById(groupName);
-//     });
+    // Escenario 4: Getting members of a group
+    test('Getting members of a group', ({ given, when, then }) => {
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
 
-//     then('the group should be deleted successfully', async () => {
-//       // Verifica que el grupo se haya eliminado correctamente
-//       const userGroups = await getDBUserList(); // Obtiene la lista de grupos del usuario
-//       // Realiza las aserciones necesarias para verificar que el grupo se haya eliminado correctamente
-//       expect(userGroups.length).toBe(0);
-//     });
-//   });
-// });
+        given('a group exists with name "Test Group" and description "This is a test group"', async () => {
+            // groupData = await saveGroup({ name: 'Test Group', description: 'This is a test group' });
+        });
+
+        given('the group has members with roles "admin", "member", and "member"', async () => {
+            // Implementación para agregar miembros a groupMembers con diferentes roles
+        });
+
+        when('the user fetches the members of the group', async () => {
+            // groupMembers = await getGroupMembers(groupData.id);
+        });
+
+        then('the user should receive a list of members in the group', () => {
+            // expect(groupMembers).to.be.an('array');
+            // expect(groupMembers).to.have.length.above(0);
+        });
+
+        then('the member details should match the information in the database', () => {
+            // Implementación para verificar si los detalles de los miembros coinciden con la información en la base de datos
+        });
+    });
+
+    // Escenario 5: Updating a member's role
+    test('Updating a member\'s role', ({ given, when, then }) => {
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
+
+        given('a group exists with name "Test Group" and description "This is a test group"', async () => {
+            // groupData = await saveGroup({ name: 'Test Group', description: 'This is a test group' });
+        });
+
+        given('the group has a member with email "member@example.com" and role "member"', async () => {
+            // Implementación para agregar un miembro con el rol "member"
+        });
+
+        when('the user updates the role of the member with email "member@example.com" to "admin"', async () => {
+            // await updateMemberRole(memberData.id, groupData.id, 'admin');
+        });
+
+        then('the member\'s role should be successfully updated to "admin"', async () => {
+            // const updatedMember = await (await getGroupMembers(groupData.id)).find(
+            //     (member: any) => member.id === memberData.id
+            // );
+            // expect(updatedMember).to.exist;
+            // expect(updatedMember?.role).to.equal('admin');
+        });
+    });
+
+    // Escenario 6: Deleting a group
+    test('Deleting a group', ({ given, when, then }) => {
+        let deletedGroup: any;
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
+
+        given('a group exists with name "Test Group" and description "This is a test group"', async () => {
+            // groupData = await saveGroup({ name: 'Test Group', description: 'This is a test group' });
+        });
+
+        when('the user deletes the group', async () => {
+            // await deleteGroupById(groupData.id);
+            // deletedGroup = groupData;
+        });
+
+        then('the group should be successfully deleted from the database', async () => {
+            // const fetchedGroup = await getGroupByIdd(deletedGroup.id);
+            // expect(fetchedGroup).to.be.null;
+        });
+
+        then('all associated members should also be deleted', async () => {
+            // const groupMembers = await getGroupMembers(deletedGroup.id);
+            // expect(groupMembers).to.have.lengthOf(0);
+        });
+    });
+
+    // Escenario 7: Getting a group by ID
+    test('Getting a group by ID', ({ given, when, then }) => {
+        let  updateGroup1: any;
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
+
+        given('a group exists with name "Test Group" and description "This is a test group"', async () => {
+            // groupData = await saveGroup({ name: 'Test Group', description: 'This is a test group' });
+        });
+
+        when('the user fetches the group by ID', async () => {
+            // updateGroup1 = await getGroupByIdd(groupData.id);
+        });
+
+        then('the user should receive the group details', () => {
+            // expect(updateGroup1).to.exist;
+            // expect(updateGroup1.name).to.equal('Test Group');
+            // expect(updateGroup1.description).to.equal('This is a test group');
+        });
+
+        then('the group details should match the information in the database', () => {
+            // Implementación para verificar si los detalles del grupo coinciden con la información en la base de datos
+        });
+    });
+
+    // Escenario 8: Updating a group's details
+    test('Updating a group\'s details', ({ given, when, then }) => {
+        let  updateGroup1: any;
+
+        given('a user is logged in', () => {
+            userLoggedIn = true;
+        });
+
+        given('a group exists with name "Test Group" and description "This is a test group"', async () => {
+            // groupData = await saveGroup({ name: 'Test Group', description: 'This is a test group' });
+        });
+
+        when(
+            'the user updates the group\'s name to "Updated Group" and description to "This is an updated test group"',
+            async () => {
+                // await updateGroup(groupData.id, { name: 'Updated Group', description: 'This is an updated test group' });
+                // updateGroup1 = await getGroupByIdd(groupData.id);
+            });
+
+        then('the group\'s details should be successfully updated in the database', () => {
+            // expect(updateGroup1).to.exist;
+            // expect(updateGroup1.name).to.equal('Updated Group');
+            // expect(updateGroup1.description).to.equal('This is an updated test group');
+        });
+    });
+});
