@@ -6,12 +6,31 @@ import { useTopics } from '../../group/hooks/use-topic'
 import { getUser} from '../../../api/user'
 import { useMemberVote } from '../../group/hooks/use-member-vote'
 import { useGetGroup } from '../../../hooks/use-get-group'
+import { Group } from '../../../model/Group'
 
-export const AdvancedSearchScreen = () => {
+export type EditGroupScreenProps = {
+  route: {params: {group: Group}};
+};
+export const AdvancedSearchScreen = ({ route }: EditGroupScreenProps) => {
+  const { group } = route.params;
   const { topics } = useTopics(); 
-  const user = getUser(); 
-  const { vote } = useMemberVote(user?.uid || '');
-  const { group } = useGetGroup(vote?.groupId|| '');
+  // const user = getUser(); 
+  // const { vote } = useMemberVote(user?.uid || '');
+  // const { group } = useGetGroup(vote?.groupId|| '');
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
 
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
@@ -47,20 +66,17 @@ export const AdvancedSearchScreen = () => {
         </TouchableOpacity>
     </View>
   );
-  const windowWidth = Dimensions.get('window').width;
-  const isWeb = windowWidth >= 768;
-  const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
-
+  
   return (
     <Center flex={1}>
       <VStack space={0.5} alignItems="center" w={contentWidth}>
       <View>
-        <GroupName title={group?.name} id={0}/>
+        <GroupName group={group} id={0}/>
       </View>
       <View >
         <Text style={styles.text}>Select more than one topic for more information.</Text>
       </View>
-      <View style={styles.container}>
+      <View >
         <FlatList
           data={data}
           renderItem={renderItem}
@@ -131,12 +147,13 @@ const styles = StyleSheet.create({
     wordWrap: 'break-word',
   },
   buttonContainer: {
-    alignSelf: 'flex-end',
-    width: '26%',
-    height: '8%',
-    paddingTop: 4,
+    // alignSelf: 'flex-end',
+    width: 72,
+    height: 30,
     backgroundColor: '#146C94',
     borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#F6F1F1',

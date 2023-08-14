@@ -2,16 +2,6 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { Topic } from '../model/Topic';
 
-// export const getTopics = async (): Promise<any> => {
-//     try {
-//       const snapshot = await firebase.firestore().collection('topics').get();
-//       const topics = snapshot.docs.map((doc) => doc.data());
-//       return topics;
-//     } catch (error) {
-//       console.log(error);
-//       return [];
-//     }
-//   };
 
   export const getTopic = async (topicId: string): Promise<any> => {
     try {
@@ -27,24 +17,6 @@ import { Topic } from '../model/Topic';
       return null;
     }
   }
-
-  // export const getTopics = async (): Promise<Topic[]> => {
-  //   const topics: Topic[] = [];
-  //   try {
-  //     const snapshot = await firebase.firestore().collection('topics').get();
-  //     snapshot.forEach((doc) => {
-  //       const topicData = doc.data();
-  //       const topic: Topic = {
-  //         id: topicData.id,
-  //         topics: topicData.topics,};
-  //       topics.push(topic);});
-  //     console.log(topics);
-  //     return topics;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return [];
-  //   }
-  // };
 
   export const getTopics = async (): Promise<Topic[]> => {
     try {

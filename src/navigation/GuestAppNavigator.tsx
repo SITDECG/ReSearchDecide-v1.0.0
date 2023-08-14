@@ -1,6 +1,6 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 
 import { GuestWelcomeScreen } from '../features/guest-welcome/screens/GuestWelcomeScreen'
 import { SignUpScreen } from "../features/sign-up/screens/SignUpScreen";
@@ -26,35 +26,47 @@ export const GuestAppNavigator = () => (
       <Stack.Screen
           name="GuestWelcome"
           component={ GuestWelcomeScreen }
-          options={
-            {
-              title: 'ReSearch Decide',
-              headerTitleAlign: 'left',
-              headerTitleStyle: headerTitleStyle.headerTitle,
-            }
-          }
+          options={{
+            headerTitle: () => (
+              <Image
+                source={require('../../assets/logoA.png')} 
+                style={{ width: 160, height: 40 }} 
+                resizeMode="contain"
+              />
+            ),
+            headerTitleAlign: 'left',
+            headerTitleStyle: headerTitleStyle.headerTitle,
+          }}
       />
       <Stack.Screen
           name="SignUpScreen"
           component={ SignUpScreen }
-          options={
-            {
-              title: 'ReSearch Decide',
-              headerTitleAlign: 'left',
-              headerTitleStyle: headerTitleStyle.headerTitle,
-            }
-          }
+          options={{
+            headerTitle: () => (
+              <Image
+                source={require('../../assets/logoA.png')} 
+                style={{ width: 160, height: 40 }} 
+                resizeMode="contain"
+              />
+            ),
+            headerTitleAlign: 'left',
+            headerTitleStyle: headerTitleStyle.headerTitle,
+          }}
       />
       <Stack.Screen
           name="ForgotPasswordScreen"
           component={ ForgotPasswordScreen }
-          options={
-            {
-              title: 'ReSearch Decide',
-              headerTitleAlign: 'left',
-              headerTitleStyle: headerTitleStyle.headerTitle,
-            }
-          }
+          options={{
+            headerTitle: () => (
+              <Image
+                source={require('../../assets/logoA.png')} 
+                style={{ width: 160, height: 40 }} 
+                resizeMode="contain"
+              />
+            ),
+            headerTitleAlign: 'left',
+            headerTitleStyle: headerTitleStyle.headerTitle,
+          }}
       />
     </Stack.Navigator>
 

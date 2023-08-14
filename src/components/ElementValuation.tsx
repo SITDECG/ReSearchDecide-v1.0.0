@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import { useUpdateBooleanProperties } from '../features/valuation/hooks/use-update-boolean-properties'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import icons from "../../assets/incons";
 
 interface ElementValuationProps {
   title: string;
@@ -14,6 +16,20 @@ export const ElementValuation = ({ title = ""}: ElementValuationProps) => {
     { id: '4', label: 'Obsolete', selected: false, left: 15 },
     { id: '5', label: 'Unfamiliar', selected: false, left: 20 },
   ])
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
 
   const { updateProperties } = useUpdateBooleanProperties();
 
@@ -30,15 +46,15 @@ export const ElementValuation = ({ title = ""}: ElementValuationProps) => {
     if (selectedItem) {
       const propertiesToUpdate: { [key: string]: boolean } = {};
       if (selectedItem.id === '1') {
-        propertiesToUpdate.novel = true;
+        propertiesToUpdate.novel = selectedItem.selected;
       } else if (selectedItem.id === '2') {
-        propertiesToUpdate.attractive = true;
+        propertiesToUpdate.attractive = selectedItem.selected;
       } else if (selectedItem.id === '3') {
-        propertiesToUpdate.trend = true;
+        propertiesToUpdate.trend = selectedItem.selected;
       } else if (selectedItem.id === '4') {
-        propertiesToUpdate.obsolete = true;
+        propertiesToUpdate.obsolete = selectedItem.selected;
       } else if (selectedItem.id === '5') {
-        propertiesToUpdate.unfamiliar = true;
+        propertiesToUpdate.unfamiliar = selectedItem.selected;
       }
       updateProperties(title, propertiesToUpdate);
     }
@@ -46,25 +62,30 @@ export const ElementValuation = ({ title = ""}: ElementValuationProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerSectionA}>
-          <View >
-            <Text style={styles.titleText}>{title}</Text>
-          </View>
+      <View style={styles.containerIcon}>
+          <FontAwesomeIcon icon={ icons.gripVertical } size={28} style={{color: "#146C94",}} />
       </View>
-      <View style={styles.containerSectionB}>
-        {items.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={[
-              styles.item,
-              item.selected ? styles.selectedItem : null,
-              { left: item.left },
-            ]}
-            onPress={() => handleItemClick(item)}
-          >
-            <Text style={styles.text}>{item.label}</Text>
-          </TouchableOpacity>
-        ))}
+      <View>
+        <View style={styles.containerSectionA}>
+            <View>
+              <Text style={styles.titleText}>{title}</Text>
+            </View>
+        </View>
+        <View style={styles.containerSectionB}>
+          {items.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={[
+                styles.item,
+                item.selected ? styles.selectedItem : null,
+                { left: item.left },
+              ]}
+              onPress={() => handleItemClick(item)}
+            >
+              <Text style={styles.text}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View>
   )
@@ -75,17 +96,20 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 5,
     justifyContent: 'center',
-    flexDirection: 'column',
+    flexDirection: 'row',
   },
   countText: {
     color: '#146C94',
     fontSize: 16,
     fontWeight: '900',
   },
+  containerIcon: {
+    paddingEnd: 5,
+    justifyContent: 'center', 
+  },
   containerSectionA: {
     position: 'relative',
     flexDirection: 'row',
-    gap: 12,
   },
   titleContainer: {
     justifyContent: 'flex-start',

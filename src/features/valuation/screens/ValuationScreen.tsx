@@ -11,10 +11,13 @@ import { useUpdateMemberVote } from '../hooks/use-update-member-vote';
 import { getUser} from '../../../api/user';
 import { useMemberVote } from '../../group/hooks/use-member-vote';
 import { useGetGroup } from '../../../hooks/use-get-group'
+import { Group } from '../../../model/Group';
+import { DecisionScreen } from '../../decision/screens/DecisionScreen';
 import { getTopicsScoreRealTime } from '../../../api/notification';
 import { TopicScore } from '../../../model/TopicScore';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowDown, faArrowUp, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+
 const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: any, message: any, onConfirm: any, onCancel: any}) => {
   return (
     <Modal
@@ -42,14 +45,32 @@ const ConfirmationModal = ({ visible, message, onConfirm, onCancel }:{visible: a
   );
 };
 
-export const ValuationScreen = () => {
+export type EditGroupScreenProps = {
+  route: {params: {group: Group}};
+};
+export const ValuationScreen = ({ route }: EditGroupScreenProps) => {
+  const { group } = route.params;
   const navigation = useNavigation();
   const user = getUser(); 
-  const { vote } = useMemberVote(user?.uid || '');
-  const { group } = useGetGroup(vote?.groupId|| '');
+  // const { vote } = useMemberVote(user?.uid || '');
+  // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopicsScore(); 
   const { updateTopicScore } = useTopicScoreUpdater(); 
   const { updateVote } = useUpdateMemberVote();
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
 
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
@@ -89,9 +110,9 @@ export const ValuationScreen = () => {
     setIsConfirmationVisible(false);
     const user = getUser();
     if (user) {
-      updateVote(user.uid, true);
+      updateVote(user.uid, true, group.id);
     }
-    navigation.navigate('DecisionScreen' as never);
+    navigation.navigate('DecisionScreen' as keyof typeof DecisionScreen, { group } as never);
   };
 
   async function onReordered(fromIndex: number, toIndex: number) {
@@ -103,9 +124,6 @@ export const ValuationScreen = () => {
     setData(copy);
   }
 
-  const windowWidth = Dimensions.get('window').width;
-  const isWeb = windowWidth >= 768;
-  const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const fadeIn = () => {
     // Will change fadeAnim value to 1 in 5 seconds
@@ -154,13 +172,11 @@ export const ValuationScreen = () => {
     };
   }, []);
 
-
-
   return (
     <Center flex={1}>
-    <VStack space={1} >
+    <VStack space={1} alignItems="center" w={contentWidth}>
       <View>
-        <GroupName title={group?.name} id={1}/>
+        <GroupName group={group} id={1}/>
       </View>
       <View style={styles.container}>
       <Animated.View
@@ -183,7 +199,7 @@ export const ValuationScreen = () => {
       </Animated.View>
     </View>
       <View >
-        <Text style={styles.text}>Order the topics according to your appreciation and rate each one.</Text>
+        <Text style={styles.text}>Drag and sort the topics and rate each one.</Text>
       </View>
       <View >
         <DragList
@@ -208,12 +224,13 @@ export const ValuationScreen = () => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    alignSelf: 'flex-end',
-    width: '16%',
-    height: '4%',
-    paddingTop: 4,
+    // alignSelf: 'flex-end',
+    width: 72,
+    height: 30,
     backgroundColor: '#146C94',
     borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#F6F1F1',
