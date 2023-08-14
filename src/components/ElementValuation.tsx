@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import { useUpdateBooleanProperties } from '../features/valuation/hooks/use-update-boolean-properties'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import icons from "../../assets/incons";
@@ -16,6 +16,20 @@ export const ElementValuation = ({ title = ""}: ElementValuationProps) => {
     { id: '4', label: 'Obsolete', selected: false, left: 15 },
     { id: '5', label: 'Unfamiliar', selected: false, left: 20 },
   ])
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
 
   const { updateProperties } = useUpdateBooleanProperties();
 

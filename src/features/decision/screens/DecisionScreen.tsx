@@ -15,15 +15,25 @@ export type EditGroupScreenProps = {
 export const DecisionScreen = ({ route }: EditGroupScreenProps) => {
   const { group } = route.params;
   const navigation = useNavigation();
-  const user = getUser(); 
-  const { vote } = useMemberVote(user?.uid || '');
+  // const user = getUser(); 
+  // const { vote } = useMemberVote(user?.uid || '');
   // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopicsScore(); 
-  
-  const windowWidth = Dimensions.get('window').width;
-  const isWeb = windowWidth >= 768;
-  const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
 
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
+  
   const handlePress = () => {
     navigation.navigate('Home' as never);
   }
@@ -115,12 +125,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   buttonContainer: {
-    alignSelf: 'flex-end',
-    width: '26%',
-    height: '8%',
-    paddingTop: 4,
+    // alignSelf: 'flex-end',
+    width: 60,
+    height: 30,
     backgroundColor: '#146C94',
     borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#F6F1F1',

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { VStack, Center } from 'native-base'
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import { GroupName } from '../../../components/GroupName'
@@ -20,7 +20,8 @@ export const GroupScreen = ({ route }: EditGroupScreenProps) => {
   console.log('group1', group);
   const navigation = useNavigation();
   const user = getUser(); 
-  const { vote } = useMemberVote(user?.uid || '');
+  const { vote } = useMemberVote(user?.uid || '', group.id);
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
 
   console.log(vote);
   if (vote?.vote) {
@@ -33,9 +34,20 @@ export const GroupScreen = ({ route }: EditGroupScreenProps) => {
     navigation.navigate('AdvancedSearchScreen' as keyof typeof AdvancedSearchScreen, { group } as never);
   };
   
-  const windowWidth = Dimensions.get('window').width;
-  const isWeb = windowWidth >= 768;
-  const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      const isWeb = windowWidth >= 768;
+      const newContentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
+      setContentWidth(newContentWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeEventListener('change', updateContentWidth);
+    };
+  }, []);
 
   return (
     <Center flex={1}>
@@ -61,15 +73,17 @@ export const GroupScreen = ({ route }: EditGroupScreenProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonContainer: {
-    alignSelf: 'flex-end',
-    width: '20%',
-    height: '8%',
-    paddingTop: 10,
+    // alignSelf: 'flex-end',
+    width: 150,
+    height: 30,
     backgroundColor: '#146C94',
     borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#F6F1F1',

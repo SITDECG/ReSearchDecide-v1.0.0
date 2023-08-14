@@ -180,10 +180,17 @@ export const updateDisplayName = async ({ displayName }: {displayName: string}):
   }
 };
 
-export const updateMemberVote = async ( uid: string, newVote: boolean): Promise<void> => {
+export const updateMemberVote = async ( uid: string, newVote: boolean, id: string): Promise<void> => {
   try {
-    const memberRef = firebase.firestore().collection('members').doc(uid);
-    await memberRef.update({ vote: newVote });
+    // const memberRef = firebase.firestore().collection('members').doc(uid);
+    // await memberRef.update({ vote: newVote });
+    const memberRef = firebase.firestore().collection('members');
+    const querySnapshot = await memberRef.where('uid', '==', uid).where('id', '==', id).get();
+
+    if (!querySnapshot.empty) {
+      const memberDoc = querySnapshot.docs[0];
+      await memberDoc.ref.update({ vote: newVote });
+    }
   } catch (error) {
     console.log('Error updating member vote:', error);
   }
@@ -208,10 +215,21 @@ export const getMemberVoteByUserId = async (userId: string | null): Promise<bool
   }
 };
 
-export const getMemberByUserId = async (userId: string): Promise<Member | null> => {
+export const getMemberByUserId = async (userId: string, id: string): Promise<Member | null> => {
   try {
-    const memberRef = firebase.firestore().collection('members').where('uid', '==', userId);
-    const querySnapshot = await memberRef.get();
+    // const memberRef = firebase.firestore().collection('members').where('uid', '==', userId);
+    // const querySnapshot = await memberRef.get();
+
+    // if (!querySnapshot.empty) {
+    //   const memberDoc = querySnapshot.docs[0];
+    //   const memberData = memberDoc.data() as Member;
+    //   return memberData;
+    // } else {
+    //   return null;
+    // }
+
+    const memberRef = firebase.firestore().collection('members');
+    const querySnapshot = await memberRef.where('uid', '==', userId).where('id', '==', id).get();
 
     if (!querySnapshot.empty) {
       const memberDoc = querySnapshot.docs[0];
