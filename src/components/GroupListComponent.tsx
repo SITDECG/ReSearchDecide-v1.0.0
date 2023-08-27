@@ -21,7 +21,7 @@ export const GroupListComponent = ({ groups }: GroupListProps) => {
   const handlePress = (group: Group) => {
     setSelectedItem(group);
     navigation.navigate('EditGroupScreen' as keyof typeof EditGroupScreen, { group } as never);
-    console.log('group', group);
+    console.log('groupList', group);
   }
 
 

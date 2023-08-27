@@ -107,8 +107,7 @@ const HomeStack = ({ navigation }: any) => (
               shadowOffset: { width: 0, height: 2 },
             },
             headerTitleStyle: styles.headerTitle, } } 
-            component={ () => <EditGroupScreen
-              route={ { params: { group: { name: '', id: '', description: '' } } } }/> }/>
+            component={ EditGroupScreen}/>
       <Stack.Screen name={ 'GroupScreen' } options={ { 
         headerTitle: HeaderImageComponent,
             headerRight: () => (

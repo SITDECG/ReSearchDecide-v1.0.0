@@ -5,6 +5,9 @@ import { User } from '../model/User';
 import { Member } from '../model/Member';
 import { useGroupsContext } from "../context/GroupContext";
 
+const db = firebase.firestore();
+const usersCollection = db.collection("users");
+
 export const getUser = (): firebase.User | null => firebase.auth().currentUser;
 
 export const deleteUser = async (): Promise<void> => {
@@ -46,6 +49,14 @@ export const deleteDBUser = async (email: string): Promise<void> => {
 };
 
 export const saveNewUserDB = async (user: firebase.User | null, userName: string): Promise<void> => {
+  // Verify if the "groups" collection exists
+  const collectionSnapshot = await usersCollection.limit(1).get();
+  const collectionExists = !collectionSnapshot.empty;
+
+  // If the collection does not exist, create an empty document for it
+  if (!collectionExists) {
+    await usersCollection.add({});
+  }
   if (user) {
     console.log('user', user)
     const { uid, email, displayName, photoURL } = user;
