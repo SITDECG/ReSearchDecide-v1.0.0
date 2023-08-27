@@ -8,4 +8,4 @@ Prototype aplication about the best way in order to make a good decision between
 - Copy the `.env.example` file and rename it to the `.env`
   - `cp .env.example .env`
 - Add Firebase SDK configuration in the `.env` file
-- Start the project `npm run start` and open it in the desired platform
+- Start the project `npx expo start` and open it in the desired platform
