@@ -1,64 +1,73 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
+import { Group } from '../model/Group';
+import { GroupScreen } from '../features/group/screens/GroupScreen';
+import { ValuationScreen } from '../features/valuation/screens/ValuationScreen';
+import { DecisionScreen } from '../features/decision/screens/DecisionScreen';
 
-// export const GroupName = ({ navigation, route }) => {
-//   const { titles } = route.params;
-//   const handlePressDiscussion = () => {
-//     navigation.navigate('Home');
-//   };
-
-//   const handlePressValuation = () => {
-//     navigation.navigate('Valuation', { titles });
-//   };
 interface GroupNameProps {
-  title: string;
+  group: Group;
   id: number;
 }
-export const GroupName: React.FC<GroupNameProps> = ({ title, id }) => {
+export const GroupName: React.FC<GroupNameProps> = ({ group, id }) => {
   const navigation = useNavigation();
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
 
   const handlePressDiscussion = () => {
-    navigation.navigate('GroupScreen' as never);
+    navigation.navigate('GroupScreen' as keyof typeof GroupScreen, { group } as never);
   }
 
   const handlePressValuation = () => {
-    navigation.navigate('ValuationScreen' as never);
+    navigation.navigate('ValuationScreen' as keyof typeof ValuationScreen, { group } as never);
   }
 
   const handlePressDecision = () => {
-    navigation.navigate('DecisionScreen' as never);
+    navigation.navigate('DecisionScreen' as keyof typeof DecisionScreen, { group } as never);
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      <View style={styles.subContainer}>
-        <TouchableOpacity
-          style={[styles.buttonGo, id === 0 ? styles.buttonUp : null]}
-          onPress={handlePressDiscussion} disabled={id === 2}>
-          <Text style={styles.textButton}>Recomended Topics</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.buttonGo, id === 1 ? styles.buttonUp : null]}
-          onPress={handlePressValuation} disabled={id === 2}>
-          <Text style={styles.textButton}>Valuation</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.blurryButton, id === 2 ? styles.buttonUp : null]}
-          onPress={handlePressDecision} disabled={id === 0 || id === 1}>
-          <Text style={[styles.textBlurryButton, id === 2 ? styles.textButton : null]}>Decision</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.line}></View>
+    <View style={[styles.container, { width: contentWidth }]}>
+        <Text style={styles.title}>{group.name}</Text>
+        <Text style={styles.subTitle}>{group.description}</Text>
+        <View style={styles.subContainer}>
+          <TouchableOpacity
+            style={[styles.buttonGo, id === 0 ? styles.buttonUp : null]}
+            onPress={handlePressDiscussion} disabled={id === 2}>
+            <Text style={styles.textButton}>Recomended Topics</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.buttonGo, id === 1 ? styles.buttonUp : null]}
+            onPress={handlePressValuation} disabled={id === 2}>
+            <Text style={styles.textButton}>Valuation</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.blurryButton, id === 2 ? styles.buttonUp : null]}
+            onPress={handlePressDecision} disabled={id === 0 || id === 1}>
+            <Text style={[styles.textBlurryButton, id === 2 ? styles.textButton : null]}>Decision</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.line, { width: contentWidth/3 }]}></View>
     </View>
+    
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
     paddingTop: 30,
     paddingBottom: 33.71,
     paddingLeft: 8,
@@ -74,12 +83,17 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     wordWrap: 'break-word',
   },
+  subTitle: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: '500',
+    wordWrap: 'break-word',
+  },
   subContainer: {
     alignSelf: 'stretch',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 38,
+    gap: 10,
   },
   buttonUp: {
     padding: 10,
@@ -113,5 +127,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     wordWrap: 'break-word',
   },
-  line: { width: '100%', height: 0, borderWidth: 0.5, borderColor: '#146C94' },
+  line: { height: 0, borderWidth: 0.5, borderColor: '#146C94' },
 })

@@ -8,9 +8,11 @@ import { GroupListComponent } from '../../../components/GroupListComponent';
 import { ActivityIndicatorComponent } from "../../../components/util/ActivityIndicatorComponent";
 import UserListComponent from "../../../components/UserListComponent";
 import { ScrollView } from "native-base";
+import { useGroupsContext } from "../../../context/GroupContext";
 
-export const GroupListScreen = () => {
-  const { groups, loading } = useGroupsList();
+export const GroupListScreen = ({loading}: {loading: boolean}) => {
+
+  const { groups } = useGroupsContext();
 
   const [searchValue, setSearchValue] = useState('');
 
@@ -19,6 +21,7 @@ export const GroupListScreen = () => {
   };
 
   let filteredGroups = groups;
+
 
   if (searchValue !== '') {
     filteredGroups = groups?.filter((group) =>

@@ -34,7 +34,7 @@ export const EditGroupForm = ({ onSubmit, buttonText, isLoading, group }: {
   isLoading: boolean,
   group: Group
 }) => {
-
+  console.log('groupEdit', group);
   const navigation = useNavigation();
 
   const initialValues = {
@@ -109,7 +109,7 @@ export const EditGroupForm = ({ onSubmit, buttonText, isLoading, group }: {
             />
           </View>
           { formik.touched.group?.description && formik.errors.group?.description && (
-              <Text style={ tw`text-red-500` }>{ formik.errors.group.description }</Text>
+              <Text style={ tw`text-red-500` }>{ formik.errors.group.description } </Text>
           ) }
 
           <TouchableOpacity

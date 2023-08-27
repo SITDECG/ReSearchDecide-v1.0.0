@@ -2,15 +2,43 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { User } from '../model/User';
+import { Member } from '../model/Member';
+import { useGroupsContext } from "../context/GroupContext";
+
+const db = firebase.firestore();
+const usersCollection = db.collection("users");
 
 // const db = firebase.firestore();
 // const userCollection = db.collection("users");
 export const getUser = (): firebase.User | null => firebase.auth().currentUser;
 
+export const deleteUser = async (): Promise<void> => {
+  const user = getUser();
+  if (user) {
+    await user.delete();
+  }
+};
+
+export const deleteUserByEmail = async (email: string): Promise<void> => {
+  const user = await firebase.auth().fetchSignInMethodsForEmail(email);
+  if (user) {
+    await firebase.auth().currentUser?.delete();
+  }
+};
+
+export const getCurrentUserForGroupList = async (): Promise<firebase.User | null> => {
+  return new Promise((resolve) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      unsubscribe();
+      resolve(user);
+    });
+  });
+};
+
+
 
 export const getCurrentUser = (): firebase.User | null => {
-  const currentUser = firebase.auth().currentUser;
-  return currentUser;
+  return firebase.auth().currentUser;
 };
 
 export const deleteDBUser = async (email: string): Promise<void> => {
@@ -24,12 +52,12 @@ export const deleteDBUser = async (email: string): Promise<void> => {
 
 export const saveNewUserDB = async (user: firebase.User | null, userName: string): Promise<void> => {
   // Verify if the "groups" collection exists
-  const collectionSnapshot = await firebase.firestore().collection("users").limit(1).get();
+  const collectionSnapshot = await usersCollection.limit(1).get();
   const collectionExists = !collectionSnapshot.empty;
 
   // If the collection does not exist, create an empty document for it
   if (!collectionExists) {
-    await firebase.firestore().collection("users").add({});
+    await usersCollection.add({});
   }
   if (user) {
 
@@ -109,6 +137,14 @@ export const signUp = async ({ email = '', password = '', userName = '' }: {
   await sendVerification();
 };
 
+export const   sendVerification = (): Promise<void> => {
+  const user = getUser();
+  if (user) {
+    return user.sendEmailVerification();
+  }
+  return Promise.reject('No user found');
+};
+
 export const logIn = ({ email = '', password = '' }: {
   email: string;
   password: string;
@@ -122,14 +158,6 @@ export const logIn = ({ email = '', password = '' }: {
         console.log('Error al iniciar sesión:', error);
         throw error;
       });
-};
-
-export const sendVerification = (): Promise<void> => {
-  const user = getUser();
-  if (user) {
-    return user.sendEmailVerification();
-  }
-  return Promise.reject('No user found');
 };
 
 export const signOut = (): Promise<void> => firebase.auth().signOut()
@@ -189,7 +217,66 @@ export const updateDisplayName = async ({ displayName }: {displayName: string}):
   }
 };
 
+export const updateMemberVote = async ( uid: string, newVote: boolean, id: string): Promise<void> => {
+  try {
+    // const memberRef = firebase.firestore().collection('members').doc(uid);
+    // await memberRef.update({ vote: newVote });
+    const memberRef = firebase.firestore().collection('members');
+    const querySnapshot = await memberRef.where('uid', '==', uid).where('id', '==', id).get();
 
+    if (!querySnapshot.empty) {
+      const memberDoc = querySnapshot.docs[0];
+      await memberDoc.ref.update({ vote: newVote });
+    }
+  } catch (error) {
+    console.log('Error updating member vote:', error);
+  }
+};
 
+export const getMemberVoteByUserId = async (userId: string | null): Promise<boolean | null> => {
+  try {
+    const memberRef = firebase.firestore().collection('members').where('uid', '==', userId);
+    const querySnapshot = await memberRef.get();
 
+    if (!querySnapshot.empty) {
+      const memberDoc = querySnapshot.docs[0];
+      const memberData = memberDoc.data();
+      const vote = memberData.vote || false; // Default to false if vote attribute is missing
+      return vote;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log('Error getting member vote by userId:', error);
+    return null;
+  }
+};
 
+export const getMemberByUserId = async (userId: string, id: string): Promise<Member | null> => {
+  try {
+    // const memberRef = firebase.firestore().collection('members').where('uid', '==', userId);
+    // const querySnapshot = await memberRef.get();
+
+    // if (!querySnapshot.empty) {
+    //   const memberDoc = querySnapshot.docs[0];
+    //   const memberData = memberDoc.data() as Member;
+    //   return memberData;
+    // } else {
+    //   return null;
+    // }
+
+    const memberRef = firebase.firestore().collection('members');
+    const querySnapshot = await memberRef.where('uid', '==', userId).where('id', '==', id).get();
+
+    if (!querySnapshot.empty) {
+      const memberDoc = querySnapshot.docs[0];
+      const memberData = memberDoc.data() as Member;
+      return memberData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log('Error getting member by userId:', error);
+    return null;
+  }
+};

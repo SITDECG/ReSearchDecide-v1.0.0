@@ -22,14 +22,6 @@ export const useTopics = () => {
 
     fetchTopics();
   }, []);
-
-  // const updateTopic = async (newOrder: string[]) => {
-  //   try {
-  //     await updateTopicOrder(newOrder);
-  //   } catch (error) {
-  //     console.log('Error updating topic order:', error);
-  //   }
-  // };
   return { topics };
 };
 

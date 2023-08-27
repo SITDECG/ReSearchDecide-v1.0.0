@@ -1,9 +1,15 @@
+
 Feature: User Management
 
   Scenario: Save new user to the database
     Given the user is not authenticated
     When a new user with email "danielo14ch@hotmail.com" and password "password123" signs up with username "Efrain"
     Then the user should be saved to the database
+
+  Scenario: User sends verification email
+    Given the user is authenticated
+    When the user sends a verification email
+    Then a verification email should be sent to the user
 
   Scenario: Retrieve user by email
     Given the user is authenticated
@@ -27,22 +33,17 @@ Feature: User Management
 
   Scenario: User sign up
     Given the user provides the following details:
-      | email            | password    | userName |
-      | danielo14ch@hotmail.com | password123 | Efrain |
+      | email                   | password    | userName |
+      | danielo14ch@hotmail.com | password123 | Efrain   |
     When the user signs up
     Then the user should be registered successfully
 
   Scenario: User log in
     Given the user provides the following credentials:
-      | email            | password    |
+      | email                   | password    |
       | danielo14ch@hotmail.com | password123 |
     When the user logs in
     Then the user should be logged in successfully
-
-  Scenario: User sends verification email
-    Given the user is authenticated
-    When the user sends a verification email
-    Then a verification email should be sent to the user
 
   Scenario: User signs out
     Given the user is authenticated

@@ -1,6 +1,5 @@
-import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
-import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Dimensions } from 'react-native'
 
 const handleTitlePress = (text: string) => {
   const query = encodeURIComponent(text)
@@ -9,6 +8,20 @@ const handleTitlePress = (text: string) => {
 }
 
 export const ElementDiscussion = ({ title = "", index = 0}:{title: string, index: number }) => {
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
@@ -24,11 +37,6 @@ export const ElementDiscussion = ({ title = "", index = 0}:{title: string, index
     </View>
   )
 }
-
-// ElementDiscussion.propTypes = {
-//   title: PropTypes.string.isRequired,
-//   index: PropTypes.number.isRequired,
-// }
 
 const styles = StyleSheet.create({
   container: {

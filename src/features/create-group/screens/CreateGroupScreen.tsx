@@ -7,19 +7,20 @@ import tw from "twrnc";
 import { ActivityIndicatorComponent } from "../../../components/util/ActivityIndicatorComponent";
 import { MESSAGE_CREATING_GROUP, MESSAGE_GROUP_CREATED, MESSAGE_ERROR } from "../../../constants/messages";
 import { Group } from "../../../model/Group";
-
+import { useGroupsContext } from "../../../context/GroupContext";
 
 export const CreateGroupScreen = () => {
   const [isGroupCreated, setGroupCreated] = useState(false);
-  const [createdGroup, setCreatedGroup] = useState<Group>(); // Cambiar a string en lugar de null
+  const [createdGroup, setCreatedGroup] = useState<Group | undefined>(); // Cambiar a string en lugar de null
   const [handleCreateGroup, createGroupState] = useCreateGroup();
-
+  const { setGroups } = useGroupsContext();
   const handleSubmit = async (values: CreateGroupFormValues) => {
     try {
       const createdGroup = await handleCreateGroup(values);
       setGroupCreated(true);
       if (createdGroup !== null) {
         setCreatedGroup(createdGroup);
+        setGroups((groups) => [...groups, createdGroup]);
       }
     } catch (error) {
       console.error(error);
@@ -47,7 +48,7 @@ export const CreateGroupScreen = () => {
             onSubmit={ handleSubmit }
             buttonText={ 'Create group' }
             isLoading={ createGroupState.isLoading }
-            groupId={ createdGroup }
+            group={ createdGroup }
         />
       </AuthenticatedLayout>
   );

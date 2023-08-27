@@ -10,6 +10,8 @@ import { TouchableOpacity, Dimensions } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import icons from '../../../../assets/incons';
 import { StyleSheet } from 'react-native';
+import { useGroupsContext } from "../../../context/GroupContext";
+import useGroupsListFirstTime from "../../../hooks/use-groups-list-first";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
@@ -22,21 +24,32 @@ export const HomeScreen = () => {
   const isWeb = windowWidth >= 768;
   const contentWidth = isWeb ? Math.round(windowWidth * 0.6) : windowWidth;
 
+  const { groups, setGroups, loading: loadingContext } = useGroupsContext();
+
+  const { groups: groupsFirstTime, loading } = useGroupsListFirstTime();
+
+  React.useEffect(() => {
+    if (groupsFirstTime.length > 0 && groups.length === 0) {
+      setGroups(groupsFirstTime);
+    }
+  });
+
+
   return (
       <AuthenticatedLayout>
         <View style={ [styles.container, isWeb && { width: contentWidth }] }>
-            <Text style={ tw`text-2xl font-medium  mb-4` }>Groups</Text>
-            <TouchableOpacity
-                style={ [tw`rounded mb-7`, styles.button] }
-                onPress={ handlePress }
-            >
-              <View style={ tw`flex-row items-center gap-2` }>
-                <FontAwesomeIcon style={ tw`text-white` } icon={ icons.add }/>
-                <Text style={ tw`text-white` }>Add Group</Text>
-              </View>
-            </TouchableOpacity>
-            <GroupListScreen/>
-          </View>
+          <Text style={ tw`text-2xl font-medium  mb-4` }>Groups</Text>
+          <TouchableOpacity
+              style={ [tw`rounded mb-7`, styles.button] }
+              onPress={ handlePress }
+          >
+            <View style={ tw`flex-row items-center gap-2` }>
+              <FontAwesomeIcon style={ tw`text-white` } icon={ icons.add }/>
+              <Text style={ tw`text-white` }>Add Group</Text>
+            </View>
+          </TouchableOpacity>
+          <GroupListScreen loading={ loading || loadingContext }/>
+        </View>
       </AuthenticatedLayout>
   );
 };

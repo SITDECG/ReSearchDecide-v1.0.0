@@ -17,7 +17,7 @@ type UserListComponentProps = {
 const UserListComponent = ({ users, groupId, onMembersAdded }: UserListComponentProps) => {
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
   const [handleAddMember, addMemberState] = useAddMember();
-
+  console.log('groupId', groupId)
   const handleValueChange = (id: string) => {
     const isSelected = selectedIds.includes(id);
     if (isSelected) {

@@ -25,3 +25,32 @@ export const useMembersList = (groupId: string): [Member[], () => void] => {
 
   return [members, refreshMembers];
 };
+
+
+// import { useEffect, useState } from 'react';
+// import { getGroupMembersListener } from '../api/groups'; // Path to the file where getGroupMembers is defined
+// import { Member } from '../model/Member';
+
+// export const useMembersList = (groupId: string): [Member[], () => void] => {
+//   const [members, setMembers] = useState<Member[]>([]);
+
+//   useEffect(() => {
+//     // Set up the real-time listener using getGroupMembers function
+//     const unsubscribe = getGroupMembersListener (groupId, (newMembers) => {
+//       setMembers((prevMembers) => [...prevMembers, ...newMembers]);
+//       console.log('new members: ',newMembers);
+//     });
+
+//     // Return a cleanup function to unsubscribe from the listener
+//     return () => unsubscribe();
+//   }, [groupId]);
+
+//   // Refresh function can still be used, if needed
+//   const refreshMembers = async () => {
+//     await getGroupMembersListener (groupId, (newMembers) => {
+//       setMembers(newMembers);
+//     });
+//   };
+
+//   return [members, refreshMembers];
+// };

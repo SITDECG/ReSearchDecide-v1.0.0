@@ -1,46 +1,56 @@
 Feature: Group Management
 
-  Scenario: Save new group to the database
-    Given the user is authenticated
-    When a new group with name "My Group" and description "This is my group" is saved
-    Then the group should be saved to the database with the correct details
+  Scenario: Saving a new group
+    Given a user is logged in
+    When the user saves a new group with name "Test Group" and description "This is a test group"
+    Then the group should be successfully saved with the provided details
+    And the user should be added as an admin member to the group
 
-  Scenario: Add a member to an existing group
-    Given the user is authenticated
-    And there exists a group with ID "group123" in the database
-    When a new member with email "user@example.com" and role "member" is added to the group with ID "group123"
-    Then the member should be added to the group with the correct details
+  Scenario: Adding a member to a group
+    Given a user is logged in
+    And a group exists with name "Test Group" and description "This is a test group"
+    When the user adds a new member with email "newmember@example.com" and role "member" to the group
+    Then the member should be successfully added to the group
+    And the member's details should match the provided information
 
-  Scenario: Get groups by user
-    Given the user is authenticated
-    And there are groups in the database
-    And the user is a member of some groups
-    When the user's groups are retrieved
-    Then the correct groups should be returned
+  Scenario: Getting groups for a user
+    Given a user is logged in
+    And the user is a member of groups "Group A", "Group B", and "Group C"
+    When the user fetches their groups
+    Then the user should receive a list of groups they are a member of
+    And the group details should match the information in the database
 
-  Scenario: Get group members
-    Given the user is authenticated
-    And there exists a group with ID "group123" in the database
-    And there are members in the group with ID "group123"
-    When the members of the group with ID "group123" are retrieved
-    Then the correct members should be returned
+  Scenario: Getting members of a group
+    Given a user is logged in
+    And a group exists with name "Test Group" and description "This is a test group"
+    And the group has members with roles "admin", "member", and "member"
+    When the user fetches the members of the group
+    Then the user should receive a list of members in the group
+    And the member details should match the information in the database
 
-  Scenario: Delete group by ID
-    Given the user is authenticated
-    And there exists a group with ID "group123" in the database
-    When the group with ID "group123" is deleted
-    Then the group should be removed from the database
+  Scenario: Updating a member's role
+    Given a user is logged in
+    And a group exists with name "Test Group" and description "This is a test group"
+    And the group has a member with email "member@example.com" and role "member"
+    When the user updates the role of the member with email "member@example.com" to "admin"
+    Then the member's role should be successfully updated to "admin"
 
-  Scenario: Delete member by ID
-    Given the user is authenticated
-    And there exists a group with ID "group123" in the database
-    And there is a member with ID "member456" in the group with ID "group123"
-    When the member with ID "member456" is deleted
-    Then the member should be removed from the group with ID "group123"
+  Scenario: Deleting a group
+    Given a user is logged in
+    And a group exists with name "Test Group" and description "This is a test group"
+    When the user deletes the group
+    Then the group should be successfully deleted from the database
+    And all associated members should also be deleted
 
-  Scenario: Update member role
-    Given the user is authenticated
-    And there exists a group with ID "group123" in the database
-    And there is a member with ID "member456" in the group with ID "group123"
-    When the role of the member with ID "member456" in the group with ID "group123" is updated to "admin"
-    Then the member's role should be updated correctly
+  Scenario: Getting a group by ID
+    Given a user is logged in
+    And a group exists with name "Test Group" and description "This is a test group"
+    When the user fetches the group by ID
+    Then the user should receive the group details
+    And the group details should match the information in the database
+
+  Scenario: Updating a group's details
+    Given a user is logged in
+    And a group exists with name "Test Group" and description "This is a test group"
+    When the user updates the group's name to "Updated Group" and description to "This is an updated test group"
+    Then the group's details should be successfully updated in the database

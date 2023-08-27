@@ -51,7 +51,7 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, group }: any)
 
   const [modalVisible, setModalVisible] = useState(false);
   const users = useUsers();
-  const isGroupCreated = group !== '';
+  const isGroupCreated = group !== undefined;
 
   const [isMembersAdded, setMembersAdded] = useState(false);
 
@@ -152,7 +152,7 @@ export const CreateGroupForm = ({ onSubmit, buttonText, isLoading, group }: any)
               <ScrollView style={ tw`w-full` }>
                 <View style={ tw`w-full` }>
                   <Text style={ tw`text-xl font-bold my-4 text-center` }>User list</Text>
-                  <UserListComponent users={ users } groupId={ group } onMembersAdded={ handleMembersAdded }/>
+                  <UserListComponent users={ users } groupId={ group?.id } onMembersAdded={ handleMembersAdded }/>
                 </View>
               </ScrollView>
             </View>

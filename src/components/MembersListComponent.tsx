@@ -17,7 +17,7 @@ type MembersListComponentProps = {
 const MembersListComponent = ({ group }: MembersListComponentProps) => {
 
   const [members, refreshMembers] = useMembersList(group?.id);
-
+  console.log('groupId', group?.id)
   const [searchValue, setSearchValue] = useState('');
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -42,6 +42,8 @@ const MembersListComponent = ({ group }: MembersListComponentProps) => {
 
   const handleDeleteClick = async (member: Member) => {
     try {
+      console.log('member', member);
+      console.log('member.id', member?.id);
       await handleDeleteMember(String(member?.id));
     } catch (error) {
       console.log("Error deleting member:", error);

@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from 'react'
 import { VStack, Center } from 'native-base'
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Linking } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Linking, Dimensions } from 'react-native'
 import { GroupName } from '../../../components/GroupName'
 import { useTopics } from '../../group/hooks/use-topic'
-// import CheckBox from '@react-native-community/checkbox';
-import { CheckBox, Icon } from '@rneui/themed';
+import { getUser} from '../../../api/user'
+import { useMemberVote } from '../../group/hooks/use-member-vote'
+import { useGetGroup } from '../../../hooks/use-get-group'
+import { Group } from '../../../model/Group'
 
-export const AdvancedSearchScreen = () => {
+export type EditGroupScreenProps = {
+  route: {params: {group: Group}};
+};
+export const AdvancedSearchScreen = ({ route }: EditGroupScreenProps) => {
+  const { group } = route.params;
   const { topics } = useTopics(); 
+  // const user = getUser(); 
+  // const { vote } = useMemberVote(user?.uid || '');
+  // const { group } = useGetGroup(vote?.groupId|| '');
+  const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const updateContentWidth = () => {
+      const windowWidth = Dimensions.get('window').width;
+      setContentWidth(windowWidth);
+    };
+
+    Dimensions.addEventListener('change', updateContentWidth);
+
+    return () => {
+      // Dimensions.removeListener('change', updateContentWidth);
+    };
+  }, []);
 
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
@@ -30,17 +53,6 @@ export const AdvancedSearchScreen = () => {
   };
 
   const renderItem = ({ item }: { item: { id: string; title: string; checked: boolean } }) => (
-    // <TouchableOpacity style={[styles.itemContainer, item.checked ? styles.buttonUp : null]} onPress={() => handleCheck(item.id)}>
-    //   <CheckBox
-    //     checked={item.checked}
-    //     onPress={() => handleCheck(item.id)}
-    //     iconType="material-community"
-    //     checkedIcon="checkbox-marked"
-    //     uncheckedIcon={'checkbox-blank-outline'}
-    //   />
-    //   <Text style={styles.titleText}>{item.id}</Text>
-    //   <Text style={styles.titleText}>{item.title}</Text>
-    // </TouchableOpacity>
       <View style={styles.containerElement}>
         <TouchableOpacity style={[styles.itemContainer, item.checked ? styles.buttonUp : null]} onPress={() => handleCheck(item.id)}>
         <View style={styles.contentContainer}>
@@ -54,17 +66,17 @@ export const AdvancedSearchScreen = () => {
         </TouchableOpacity>
     </View>
   );
-
+  
   return (
     <Center flex={1}>
-    <VStack space={1} alignItems="center" w="50%" >
+      <VStack space={0.5} alignItems="center" w={contentWidth}>
       <View>
-        <GroupName title={"EPN"} id={0}/>
+        <GroupName group={group} id={0}/>
       </View>
       <View >
         <Text style={styles.text}>Select more than one topic for more information.</Text>
       </View>
-      <View style={styles.container}>
+      <View >
         <FlatList
           data={data}
           renderItem={renderItem}
@@ -135,12 +147,13 @@ const styles = StyleSheet.create({
     wordWrap: 'break-word',
   },
   buttonContainer: {
-    alignSelf: 'flex-end',
-    width: '12%',
-    height: '8%',
-    paddingTop: 4,
+    // alignSelf: 'flex-end',
+    width: 72,
+    height: 30,
     backgroundColor: '#146C94',
     borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#F6F1F1',
