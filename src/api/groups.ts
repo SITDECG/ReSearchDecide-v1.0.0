@@ -268,9 +268,7 @@ export const updateMemberRole = async (memberId: string, groupId: string, newRol
   await memberCollection.doc(memberId).update({ role: newRole });
 }
 
-export const updateGroup = async (groupId: string, group: Group): Promise<void> => {
-  await groupCollection.doc(groupId).update(group);
-}
+
 
 
 
