@@ -1,12 +1,5 @@
-# Expo Firebase Authentication
-
-Sample Expo application to showcase email and password based authentication using Firebase, with support for sign up, sign in, sign out, email verification, forgot password, and update password.
-
-Follow along each step of the process in the blog post series:
-
-- [Part 1: Project Setup](https://diegocasmo.github.io/2021-08-29-email-and-password-based-authentication-with-expo-and-firebase-part-1-project-setup/)
-- [Part 2: Sign up, Email Verification, and Sign Out](https://diegocasmo.github.io/2021-09-10-email-and-password-based-authentication-with-expo-and-firebase-part-2-sign-up-email-verification-and-sign-out/)
-- [Part 3: Sign In, Forgot Password, and Update Password](https://diegocasmo.github.io/2021-09-19-email-and-password-based-authentication-with-expo-and-firebase-part-3-sign-in-forgot-password-and-update-password/)
+# Expo Aplication: ReSearch Decide
+Prototype aplication about the best way in order to make a good decision between scientist for a investigation topic.
 
 ## Installation
 
