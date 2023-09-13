@@ -9,8 +9,6 @@ import { useTopicsScore } from '../hooks/use-topic-score';
 import { useTopicScoreUpdater} from '../hooks/use-topic-score-updater';
 import { useUpdateMemberVote } from '../hooks/use-update-member-vote';
 import { getUser} from '../../../api/user';
-import { useMemberVote } from '../../group/hooks/use-member-vote';
-import { useGetGroup } from '../../../hooks/use-get-group'
 import { Group } from '../../../model/Group';
 import { DecisionScreen } from '../../decision/screens/DecisionScreen';
 import { getTopicsScoreRealTime } from '../../../api/notification';
@@ -52,8 +50,6 @@ export const ValuationScreen = ({ route }: EditGroupScreenProps) => {
   const { group } = route.params;
   const navigation = useNavigation();
   const user = getUser(); 
-  // const { vote } = useMemberVote(user?.uid || '');
-  // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopicsScore(); 
   const { updateTopicScore } = useTopicScoreUpdater(); 
   const { updateVote } = useUpdateMemberVote();

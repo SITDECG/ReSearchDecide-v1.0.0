@@ -4,10 +4,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-nati
 import { GroupName } from '../../../components/GroupName'
 import { useTopicsScore } from '../../valuation/hooks/use-topic-score'
 import { useNavigation } from '@react-navigation/native'
-import { getUser} from '../../../api/user'
-import { useMemberVote } from '../../group/hooks/use-member-vote'
-import { useGetGroup } from '../../../hooks/use-get-group';
 import { Group } from '../../../model/Group'
+import { TopicScore } from '../../../model/TopicScore'
 
 export type EditGroupScreenProps = {
   route: {params: {group: Group}};
@@ -15,9 +13,6 @@ export type EditGroupScreenProps = {
 export const DecisionScreen = ({ route }: EditGroupScreenProps) => {
   const { group } = route.params;
   const navigation = useNavigation();
-  // const user = getUser(); 
-  // const { vote } = useMemberVote(user?.uid || '');
-  // const { group } = useGetGroup(vote?.groupId|| '');
   const { topics } = useTopicsScore(); 
   const [contentWidth, setContentWidth] = useState(Dimensions.get('window').width);
 

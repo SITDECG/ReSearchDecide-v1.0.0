@@ -5,6 +5,8 @@ import tw from "twrnc";
 import { Group } from "../model/Group";
 import { useNavigation } from "@react-navigation/native";
 import { GroupScreen } from "../features/group/screens/GroupScreen";
+import { getUser } from "../api/user";
+import { useMemberVote } from "../features/group/hooks/use-member-vote";
 
 export type GroupItemProps = {
   group: Group,
@@ -14,6 +16,8 @@ export type GroupItemProps = {
 
 export const GroupItemComponent = ({ group, onPress, isSelected }: GroupItemProps) => {
   const [isPressed, setIsPressed] = useState(false);
+  const user = getUser(); 
+  const { vote } = useMemberVote(user?.uid || '', group.id);
 
   const navigation = useNavigation();
 
@@ -46,9 +50,11 @@ export const GroupItemComponent = ({ group, onPress, isSelected }: GroupItemProp
             <Text style={[tw`font-bold`]}>{group.name.toUpperCase() || ' Group name'}</Text>
             <Text style={[tw`text-gray-500`]}>{group.description || 'Group description'}</Text>
           </View>
-          <TouchableHighlight style={[tw`rounded`, styles.button]} onPress={onPress} underlayColor="#125C7F">
-            <Text style={[tw`text-white`]}>Edit</Text>
-          </TouchableHighlight>
+          {vote?.role === 'admin' ? (
+            <TouchableHighlight style={[tw`rounded`, styles.button]} onPress={onPress} underlayColor="#125C7F">
+              <Text style={[tw`text-white`]}>Edit</Text>
+            </TouchableHighlight>
+          ) : null}
         </View>
       </TouchableHighlight>
     </View>

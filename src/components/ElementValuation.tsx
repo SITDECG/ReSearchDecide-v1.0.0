@@ -95,13 +95,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     padding: 5,
-    justifyContent: 'center',
     flexDirection: 'row',
-  },
-  countText: {
-    color: '#146C94',
-    fontSize: 16,
-    fontWeight: '900',
   },
   containerIcon: {
     paddingEnd: 5,
@@ -127,15 +121,13 @@ const styles = StyleSheet.create({
   },
   item: {
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'rgba(150, 152, 155, 0.3)',
     paddingHorizontal: 6,
     paddingVertical: 4,
   },
   text: {
     color: '#424242',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '500',
     textAlign: 'center',
   },
